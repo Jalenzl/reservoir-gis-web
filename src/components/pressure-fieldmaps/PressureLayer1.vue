@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import * as dat from "dat.gui"
-import {ConstantProperty, JulianDate} from "cesium"
+import {Cartesian3, ConstantProperty, JulianDate} from "cesium"
 import {
   usePressureStore_l1t1,
   usePressureStore_l1t2,
@@ -35,6 +35,8 @@ import {CesiumTool} from "@/utils/CesiumTool";
 import {GeoJsonTool} from "@/utils/GeoJsonTool";
 import {SectionAnalysis} from "@/utils/analyze/section-analysis";
 import {Render} from "@/utils/Render";
+import type {Position} from "@turf/helpers/dist/js/lib/geojson";
+import {featureEach} from "@turf/meta";
 
 
 type sampleData = interp.CesiumInterpolation.CesiumInterpSampleData
@@ -61,15 +63,6 @@ let {getData_l1t6} = pressureStore_l1t6
 let {getData_l1t7} = pressureStore_l1t7
 let {getData_l1t8} = pressureStore_l1t8
 
-let {pressureArr_l1t1, position5_l1t1} = storeToRefs(pressureStore_l1t1)
-let {pressureArr_l1t2} = storeToRefs(pressureStore_l1t2)
-let {pressureArr_l1t3} = storeToRefs(pressureStore_l1t3)
-let {pressureArr_l1t4} = storeToRefs(pressureStore_l1t4)
-let {pressureArr_l1t5} = storeToRefs(pressureStore_l1t5)
-let {pressureArr_l1t6} = storeToRefs(pressureStore_l1t6)
-let {pressureArr_l1t7} = storeToRefs(pressureStore_l1t7)
-let {pressureArr_l1t8} = storeToRefs(pressureStore_l1t8)
-
 const sampleTime = useSampleTime()
 let {timeArr} = storeToRefs(sampleTime)
 
@@ -92,16 +85,6 @@ const chartsSettings = reactive<ChartsSettinngs>({
   showCharts_DynamicPressure: false
 })
 
-onBeforeMount(async () => {
-  await getData_l1t2()
-  await getData_l1t3()
-  await getData_l1t4()
-  await getData_l1t5()
-  await getData_l1t6()
-  await getData_l1t7()
-  await getData_l1t8()
-})
-
 onMounted(async () => {
   /*--------initializing map------------*/
 
@@ -115,23 +98,97 @@ onMounted(async () => {
 
   /*--------dealing with data---------*/
 
-  const geojson = await getData_l1t1()
+  const pressure_l1t1_jsonData = await getData_l1t1()
+  const pressure_l1t2_jsonData = await getData_l1t2()
+  const pressure_l1t3_jsonData = await getData_l1t3()
+  const pressure_l1t4_jsonData = await getData_l1t4()
+  const pressure_l1t5_jsonData = await getData_l1t5()
+  const pressure_l1t6_jsonData = await getData_l1t6()
+  const pressure_l1t7_jsonData = await getData_l1t7()
+  const pressure_l1t8_jsonData = await getData_l1t8()
+
+
+  //get pressure data & coordinates5 position5 data
+
+  let coordinatesArr = reactive<Position[][]>([])
+  let position5Arr = reactive<Cartesian3[][]>([])
+
+// layer1
+  let pressureArr_l1t1 = reactive<number[]>([])
+  let pressureArr_l1t2 = reactive<number[]>([])
+  let pressureArr_l1t3 = reactive<number[]>([])
+  let pressureArr_l1t4 = reactive<number[]>([])
+  let pressureArr_l1t5 = reactive<number[]>([])
+  let pressureArr_l1t6 = reactive<number[]>([])
+  let pressureArr_l1t7 = reactive<number[]>([])
+  let pressureArr_l1t8 = reactive<number[]>([])
+
+  // get l1t1 pressure data & coordinates data
+  featureEach(pressure_l1t1_jsonData, currentFeature => {
+    pressureArr_l1t1.push(currentFeature.properties.pressure)
+    let cordTempArr = []
+    let position5Temp = null
+    currentFeature.geometry.coordinates[0][0].forEach(item => {
+      cordTempArr.push(...item)
+      position5Temp = Cartesian3.fromDegreesArray(cordTempArr)
+    })
+    coordinatesArr.push(cordTempArr)
+    position5Arr.push(position5Temp)
+  })
+
+  // get l1t2 pressure data
+  featureEach(pressure_l1t2_jsonData, currentFeature => {
+    pressureArr_l1t2.push(currentFeature.properties.pressure)
+  })
+
+  // get l1t3 pressure data
+  featureEach(pressure_l1t3_jsonData, currentFeature => {
+    pressureArr_l1t3.push(currentFeature.properties.pressure)
+  })
+
+  // get l1t4 pressure data
+  featureEach(pressure_l1t4_jsonData, currentFeature => {
+    pressureArr_l1t4.push(currentFeature.properties.pressure)
+  })
+
+  // get l1t5 pressure data
+  featureEach(pressure_l1t5_jsonData, currentFeature => {
+    pressureArr_l1t5.push(currentFeature.properties.pressure)
+  })
+
+  // get l1t6 pressure data
+  featureEach(pressure_l1t6_jsonData, currentFeature => {
+    pressureArr_l1t6.push(currentFeature.properties.pressure)
+  })
+
+  // get l1t7 pressure data
+  featureEach(pressure_l1t7_jsonData, currentFeature => {
+    pressureArr_l1t7.push(currentFeature.properties.pressure)
+  })
+
+  // get l1t8 pressure data
+  featureEach(pressure_l1t8_jsonData, currentFeature => {
+    pressureArr_l1t8.push(currentFeature.properties.pressure)
+  })
+
+  // tileNum
+  let tileNum = pressureArr_l1t1.length
 
   //sample pressure array
   const pressrueArrList_l1: number[][] = [
-    pressureArr_l1t1.value,
-    pressureArr_l1t2.value,
-    pressureArr_l1t3.value,
-    pressureArr_l1t4.value,
-    pressureArr_l1t5.value,
-    pressureArr_l1t6.value,
-    pressureArr_l1t7.value,
-    pressureArr_l1t8.value,
+    pressureArr_l1t1,
+    pressureArr_l1t2,
+    pressureArr_l1t3,
+    pressureArr_l1t4,
+    pressureArr_l1t5,
+    pressureArr_l1t6,
+    pressureArr_l1t7,
+    pressureArr_l1t8,
   ]
 
   const cesiumFieldMap = new CesiumFieldMap(
       viewer, // viewer
-      geojson, // geojson
+      pressure_l1t1_jsonData, // geojson
       clock, // clock
       "pressure", // propName
   )
@@ -185,10 +242,19 @@ onMounted(async () => {
   let handler = null
   let mySectionChart = null
   const startSectionAnalysis = async () => {
-    const sectionAnalysis: SectionAnalysis = new SectionAnalysis(viewer, clock, geojson, sampleData_l1)
+    const sectionAnalysis: SectionAnalysis = new SectionAnalysis(viewer, clock, pressure_l1t1_jsonData, sampleData_l1)
     await sectionAnalysis.init(position5_l1t1.value, sectionCharts.value as HTMLCanvasElement, handler)
     mySectionChart = sectionAnalysis.mySectionChart
   }
+
+  /*-----------isoline analysis--------------*/
+  // const featureCollection = await GeoJsonTool.getCentroid(cesiumFieldMap, sampleData_l1, coordinates_l1t1.value, cesiumFieldMap.getTileNum())
+  // console.log(featureCollection)
+
+  console.log(sampleData_l1)
+  cesiumFieldMap.getCurrentPropValue(sampleData_l1).then((res) => {
+    console.log(res)
+  })
 
 
   /*--------------viewModel-----------------*/
