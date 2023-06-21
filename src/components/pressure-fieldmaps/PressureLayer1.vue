@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import * as dat from "dat.gui"
-import {Cartesian3, ConstantProperty, JulianDate} from "cesium"
+import {Cartesian3, JulianDate} from "cesium"
 import {
   usePressureStore_l1t1,
   usePressureStore_l1t2,
@@ -27,7 +27,7 @@ import {
   usePressureStore_l1t8,
 } from "@/stores/pressure/pressureLayer1";
 import {useSampleTime} from "@/stores/time/sampleTime";
-import {computed, onBeforeMount, onMounted, reactive, ref, watch} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import {CesiumFieldMap} from "@/utils/GridFieldMap/CesiumFieldMap";
 import {storeToRefs} from "pinia";
 import PressureColorBand from "@/components/colorBand/pressureColorBand.vue";
@@ -35,14 +35,16 @@ import {CesiumTool} from "@/utils/CesiumTool";
 import {GeoJsonTool} from "@/utils/GeoJsonTool";
 import {SectionAnalysis} from "@/utils/analyze/section-analysis";
 import {Render} from "@/utils/Render";
-import type {Position} from "@turf/helpers/dist/js/lib/geojson";
+import type {FeatureCollection, Position} from "@turf/helpers/dist/js/lib/geojson";
 import {featureEach} from "@turf/meta";
+import {IsolineAnalysis} from "@/utils/analyze/isoline-analysis";
 
 
 type sampleData = interp.CesiumInterpolation.CesiumInterpSampleData
 type Options = interp.CesiumInterpolation.CesiumInterpOptions
 type ChartsSettinngs = charts.ChartsSettings
 type IMapInstance = map.IMapInstance
+type IsobandInterpolationData = analyze.isolineAnalysis.IsobandInterpolationData
 
 /*---------pinia------------*/
 const pressureStore_l1t1 = usePressureStore_l1t1()
@@ -243,19 +245,43 @@ onMounted(async () => {
   let mySectionChart = null
   const startSectionAnalysis = async () => {
     const sectionAnalysis: SectionAnalysis = new SectionAnalysis(viewer, clock, pressure_l1t1_jsonData, sampleData_l1)
-    await sectionAnalysis.init(position5_l1t1.value, sectionCharts.value as HTMLCanvasElement, handler)
+    await sectionAnalysis.init(position5Arr, sectionCharts.value as HTMLCanvasElement, handler)
     mySectionChart = sectionAnalysis.mySectionChart
   }
 
   /*-----------isoline analysis--------------*/
-  // const featureCollection = await GeoJsonTool.getCentroid(cesiumFieldMap, sampleData_l1, coordinates_l1t1.value, cesiumFieldMap.getTileNum())
-  // console.log(featureCollection)
+  let dynamicIsolineController = null
 
-  console.log(sampleData_l1)
-  cesiumFieldMap.getCurrentPropValue(sampleData_l1).then((res) => {
-    console.log(res)
-  })
+  const startIsolineAnalysis = async () => {
+    const centoidPoints = await GeoJsonTool.getCentroid(cesiumFieldMap, sampleData_l1, coordinatesArr, cesiumFieldMap.getTileNum())
+    const isolineInterpData: IsobandInterpolationData = {
+      centroidPoints: centoidPoints,
+      cellSize: 0.0001,
+      propertyName: "pressure",
+    }
+    const isolineAnalysis = new IsolineAnalysis(cesiumFieldMap, isolineInterpData)
 
+    await isolineAnalysis.init()
+  }
+
+  const startDynamicIsoline = () => {
+    dynamicIsolineController = setInterval(async () => {
+      startIsolineAnalysis().then(() => {
+        if (viewer.dataSources.length > 1) {
+          viewer.dataSources.remove(viewer.dataSources.get(0))
+        }
+      })
+    }, 1000)
+  }
+
+  const stopDynamicIsoline = () => {
+    clearInterval(dynamicIsolineController)
+    setTimeout(() => { // 去除所有entity前必须先等待前一次绘制完成 这里预留300ms
+      while (viewer.dataSources.length > 0) {
+        viewer.dataSources.removeAll()
+      }
+    }, 300)
+  }
 
   /*--------------viewModel-----------------*/
   const viewModel = {
@@ -277,7 +303,9 @@ onMounted(async () => {
       if (mySectionChart) {
         mySectionChart.dispose()
       }
-    }
+    },
+    startDynamicIsoline,
+    stopDynamicIsoline,
   }
 
   /*---------------gui----------------*/
@@ -290,6 +318,7 @@ onMounted(async () => {
   // 添加目录层级
   const settings2DFolder = gui.addFolder('2D Settings')
   const sectionAnalysis = gui.addFolder('Section Analysis')
+  const isolineAnalysis = gui.addFolder('Isoline Analysis')
 
   settings2DFolder
       .add(renderSettings, "renderType", {
@@ -331,6 +360,15 @@ onMounted(async () => {
       .onChange(() => {
         chartsSettings.showCharts_SectionAnalysis = false
         viewModel.showExtrudedHeight()
+      })
+  isolineAnalysis
+      .add(viewModel, 'startDynamicIsoline')
+      .name('动态计算等值线')
+  isolineAnalysis
+      .add(viewModel, 'stopDynamicIsoline')
+      .name('停止计算等值线')
+      .onChange(() => {
+        stopDynamicIsoline()
       })
   gui
       .add(renderOptions, "outline")

@@ -1,4 +1,12 @@
-import {FeatureCollection, Feature, Position, polygon, Polygon, point, featureCollection as FfeatureCollection} from "@turf/helpers"
+import {
+    FeatureCollection,
+    Feature,
+    Position,
+    polygon,
+    Polygon,
+    point,
+    featureCollection as FfeatureCollection
+} from "@turf/helpers"
 import {featureEach} from "@turf/meta";
 import {featureOf} from "@turf/invariant";
 import {centroid} from "@turf/turf";
@@ -36,18 +44,22 @@ export class GeoJsonTool {
             locationArr.push(location)
         }
 
-        const featureCollection = FfeatureCollection(locationArr)
+        const featureCollection: FeatureCollection = FfeatureCollection(locationArr)
 
         // 获取pointGrid
-        const currrentPropArr = await cesiumFiledMap.getCurrentPropValue(sampleData)
+        try {
+            const currentPropValue: number[] | undefined = await cesiumFiledMap.getCurrentPropValue(sampleData)
 
-        for (let i = 0; i < tileNum; i++) {
-            if (currrentPropArr) {
-                featureCollection.features[i].properties.pressure = currrentPropArr[i]
+            for (let i = 0; i < tileNum; i++) {
+                if (currentPropValue) {
+                    featureCollection.features[i].properties[cesiumFiledMap.propName] = currentPropValue[i]
+                }
             }
-        }
 
-        return featureCollection
+            return featureCollection
+        } catch (e) {
+            console.error(e)
+        }
 
     }
 }

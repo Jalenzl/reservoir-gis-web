@@ -72,7 +72,7 @@ export class CesiumFieldMap extends GridFieldMap {
                     // 赋高度
                     entity.polygon.extrudedHeight = new ConstantProperty(propVal / 700)
                     // 赋描述
-                    const pressureStr = String(propVal.toFixed(2))
+                    const pressureStr = String(propVal?.toFixed(2))
                     entity.description = new ConstantProperty("pressure:" + pressureStr + "kpa")
                     // 赋属性
                     let pb = new PropertyBag()
