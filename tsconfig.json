@@ -12,6 +12,13 @@
     "types": [
       "element-plus/global",
       "node"
-    ]
+    ],
+    "allowJs": true
   },
+  "include": [
+    "env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.vue",
+  ]
 }

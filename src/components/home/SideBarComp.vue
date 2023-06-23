@@ -52,7 +52,7 @@
           </el-icon>
           <span>专题分析</span>
         </template>
-        <el-menu-item index="/pressurePointGrid">点阵分析</el-menu-item>
+        <el-menu-item index="/krigingPressureFiledMap">克里金插值动态场图</el-menu-item>
       </el-sub-menu>
     </el-menu>
   </div>

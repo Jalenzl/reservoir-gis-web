@@ -11,8 +11,10 @@ import {
 } from 'cesium';
 import type {CesiumFieldMap} from "@/utils/GridFieldMap/CesiumFieldMap";
 import type {GridFieldMap} from "@/utils/GridFieldMap";
+import {post} from "@/utils/request";
 
 type SampleData = interp.CesiumInterpolation.CesiumInterpSampleData
+type Response = interp.CesiumInterpolation.CesiumInterpResponse
 
 export class CesiumTool {
 
@@ -122,4 +124,25 @@ export class CesiumTool {
         }
     }
 
+    public static async getCurrentPropValue(clock: Clock, sampleData: SampleData): Promise<number[] | undefined> {
+        sampleData.currentTime = JulianDate.toIso8601(clock.currentTime)
+
+        const getInterpolatedData = async (sampleData: SampleData): Promise<Response | undefined> => {
+            try {
+                return await post(
+                    "https://testserver.vip.cpolar.cn/api/v1/cesium/interpolation",
+                    JSON.stringify(sampleData)
+                )
+            } catch (e) {
+                console.error(e)
+            }
+        }
+
+        try {
+            const res: Response | undefined = await getInterpolatedData(sampleData)
+            return res?.currentPropValArr
+        } catch (e) {
+            console.error(e)
+        }
+    }
 }

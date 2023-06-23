@@ -34,11 +34,12 @@ import {
   usePressureStore_l1t7,
   usePressureStore_l1t8,
 } from "@/stores/pressure/pressureLayer1";
+import {useBoundaryStore} from "@/stores/boundary/boundary";
 import {useSampleTime} from "@/stores/time/sampleTime";
 import {onMounted, reactive, ref, watch} from "vue";
 import {CesiumFieldMap} from "@/utils/GridFieldMap/CesiumFieldMap";
 import {storeToRefs} from "pinia";
-import PressureColorBand from "@/components/colorBand/pressureColorBand.vue";
+import PressureColorBand from "@/components/colorBand/PressureColorBand.vue";
 import {CesiumTool} from "@/utils/CesiumTool";
 import {GeoJsonTool} from "@/utils/GeoJsonTool";
 import {SectionAnalysis} from "@/utils/analyze/section-analysis";
@@ -47,8 +48,8 @@ import type {FeatureCollection, Position} from "@turf/helpers/dist/js/lib/geojso
 import {featureEach} from "@turf/meta";
 import {IsolineAnalysis} from "@/utils/analyze/isoline-analysis";
 import {DynamicChartAnalysis} from "@/utils/analyze/dynamic-chart-analysis";
-import type {EChartsType} from "echarts";
-
+import {WGS84_GeoJson} from "@/utils/GeoJsonTool/WGS84_GeoJson";
+import {KrigingFieldMap} from "@/utils/GridFieldMap/KrigingFieldMap";
 
 type sampleData = interp.CesiumInterpolation.CesiumInterpSampleData
 type Options = interp.CesiumInterpolation.CesiumInterpOptions
@@ -65,6 +66,7 @@ const pressureStore_l1t5 = usePressureStore_l1t5()
 const pressureStore_l1t6 = usePressureStore_l1t6()
 const pressureStore_l1t7 = usePressureStore_l1t7()
 const pressureStore_l1t8 = usePressureStore_l1t8()
+const boundaryStore = useBoundaryStore()
 
 let {getData_l1t1} = pressureStore_l1t1
 let {getData_l1t2} = pressureStore_l1t2
@@ -74,6 +76,7 @@ let {getData_l1t5} = pressureStore_l1t5
 let {getData_l1t6} = pressureStore_l1t6
 let {getData_l1t7} = pressureStore_l1t7
 let {getData_l1t8} = pressureStore_l1t8
+let {getBoundaryLine} = boundaryStore
 
 const sampleTime = useSampleTime()
 let {timeArr} = storeToRefs(sampleTime)
@@ -222,31 +225,35 @@ onMounted(async () => {
 
 
   /*--------------rendering-----------------*/
-  let staticRenderController = null
-  let dynamicRenderController = null
+  const mainRendering = () => {
+    let staticRenderController = null
+    let dynamicRenderController = null
 
 
-  const render = new Render(viewer, clock)
+    const render = new Render(viewer, clock)
 
-  watch(
-      renderSettings,
-      (val) => {
-        if (Number(val.renderType) === 1) {
-          if (dynamicRenderController) {
-            clearInterval(dynamicRenderController)
-            viewer.entities.removeAll()
+    watch(
+        renderSettings,
+        (val) => {
+          if (Number(val.renderType) === 1) {
+            if (dynamicRenderController) {
+              clearInterval(dynamicRenderController)
+              viewer.entities.removeAll()
+            }
+            staticRenderController = render.renderByFixedTime(cesiumFieldMap, sampleData_l1, renderOptions)
+          } else if (Number(val.renderType) === 2) {
+            if (staticRenderController) {
+              clearInterval(staticRenderController)
+              viewer.entities.removeAll()
+            }
+            dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l1, renderOptions)
           }
-          staticRenderController = render.renderByFixedTime(cesiumFieldMap, sampleData_l1, renderOptions)
-        } else if (Number(val.renderType) === 2) {
-          if (staticRenderController) {
-            clearInterval(staticRenderController)
-            viewer.entities.removeAll()
-          }
-          dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l1, renderOptions)
-        }
-      },
-      {immediate: true}
-  )
+        },
+        {immediate: true}
+    )
+  }
+
+  mainRendering()
   // const dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l1, renderOptions)
   // const staticRenderController = render.renderByFixedTime(cesiumFieldMap, sampleData_l1, renderOptions)
 
@@ -292,6 +299,66 @@ onMounted(async () => {
         viewer.dataSources.removeAll()
       }
     }, 300)
+  }
+
+  /*------------kriging interpolation-------------*/
+  const gridBoundaryLine = await getBoundaryLine()
+  const krigingFieldMap = new KrigingFieldMap(
+      viewer,
+      krigingCanvas.value as HTMLCanvasElement,
+      gridBoundaryLine,
+      pressure_l1t1_jsonData,
+      "boundary_line_01",
+      "pressure"
+  );
+
+  const startKrigingInterpolation = async () => {
+    viewer.entities.removeAll()
+
+    const getPropGeoJson = async () => {
+      let featureArr = []
+      const coordArr = WGS84_GeoJson.getCoordinates(pressure_l1t1_jsonData);
+      const value = await CesiumTool.getCurrentPropValue(clock, sampleData_l1)
+
+      coordArr.forEach((item, index) => {
+        let lng = [];
+        let lat = [];
+        item.forEach((item2) => {
+          lng.push(item2[0]);
+          lat.push(item2[1]);
+        });
+        const geojson = new WGS84_GeoJson(lng, lat);
+        const multiPolygon = geojson.createMultiPolygon(
+            "pressure",
+            value![index]
+        );
+        featureArr.push(multiPolygon);
+      })
+      return WGS84_GeoJson.createFeatureCollection(featureArr);
+    }
+
+    const R = () => {
+      const animationViewModel = viewer.animation.viewModel;
+      let currentTime = ref(animationViewModel.timeLabel);
+      const renderController = setInterval(() => {
+        currentTime.value = animationViewModel.timeLabel;
+      }, 500);
+
+      krigingFieldMap.init();
+
+      watch(currentTime, async (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+          const propGeoJson = await getPropGeoJson();
+          krigingFieldMap.update(propGeoJson);
+        }
+      });
+    }
+
+    R()
+  }
+
+  const stopKrigingInterpolation = () => {
+    krigingFieldMap.destroy()
   }
 
   /*---------dynamic chart analysis----------*/

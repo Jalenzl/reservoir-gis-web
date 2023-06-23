@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/home/HomeIndex.vue'
 
 const PressureFiledMap = () => import('../views/fieldMap/PressureFiledMap.vue')
+const KrigingPressureFieldMap = () => import('@/components/pressure-fieldmaps/Kriging.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +20,11 @@ const router = createRouter({
       path: '/pressureFiledMap',
       name: 'PressureFiledMap',
       component: PressureFiledMap
+    },
+    {
+      path: '/krigingPressureFiledMap',
+      name: 'KrigingPressureFiledMap',
+      component: KrigingPressureFieldMap
     },
   ]
 })
