@@ -13,7 +13,6 @@ import type {CesiumFieldMap} from "@/utils/GridFieldMap/CesiumFieldMap";
 import type {GridFieldMap} from "@/utils/GridFieldMap";
 
 type SampleData = interp.CesiumInterpolation.CesiumInterpSampleData
-type Response = interp.CesiumInterpolation.CesiumInterpResponse
 
 export class CesiumTool {
 

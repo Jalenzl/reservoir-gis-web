@@ -10,12 +10,20 @@
         <div class="sectionCharts" ref="sectionCharts"></div>
       </div>
     </Transition>
+    <Transition name="fade">
+      <div class="section-charts-container" v-show="chartsSettings.showCharts_DynamicPressure">
+        <div class="tittle-container">
+          <h4 class="title">Dynamic Pressure</h4>
+        </div>
+        <div class="dynamicCharts" ref="dynamicCharts"></div>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
 import * as dat from "dat.gui"
-import {Cartesian3, JulianDate} from "cesium"
+import {Cartesian3, JulianDate, ConstantProperty} from "cesium"
 import {
   usePressureStore_l1t1,
   usePressureStore_l1t2,
@@ -38,6 +46,8 @@ import {Render} from "@/utils/Render";
 import type {FeatureCollection, Position} from "@turf/helpers/dist/js/lib/geojson";
 import {featureEach} from "@turf/meta";
 import {IsolineAnalysis} from "@/utils/analyze/isoline-analysis";
+import {DynamicChartAnalysis} from "@/utils/analyze/dynamic-chart-analysis";
+import type {EChartsType} from "echarts";
 
 
 type sampleData = interp.CesiumInterpolation.CesiumInterpSampleData
@@ -71,6 +81,7 @@ let {timeArr} = storeToRefs(sampleTime)
 /*----------dom----------*/
 const toolbar = ref<HTMLElement | null>(null)
 const sectionCharts = ref<HTMLElement | null>(null)
+const dynamicCharts = ref<HTMLElement | null>(null)
 
 
 /*----------settings--------*/
@@ -283,6 +294,18 @@ onMounted(async () => {
     }, 300)
   }
 
+  /*---------dynamic chart analysis----------*/
+  const dynamicChartAnalysis = new DynamicChartAnalysis(dynamicCharts.value as HTMLCanvasElement, cesiumFieldMap, clock, sampleData_l1)
+  const startDynamicChartAnalysis = async () => {
+    chartsSettings.showCharts_DynamicPressure = true
+    await dynamicChartAnalysis.init(viewModel.dynamicChartId)
+  }
+
+  const stopDynamicChartAnalysis = () => {
+    dynamicChartAnalysis.destroyDynamicChart()
+    chartsSettings.showCharts_DynamicPressure = false
+  }
+
   /*--------------viewModel-----------------*/
   const viewModel = {
     showExtrudedHeight() {
@@ -306,6 +329,9 @@ onMounted(async () => {
     },
     startDynamicIsoline,
     stopDynamicIsoline,
+    dynamicChartId: 1,
+    startDynamicChartAnalysis,
+    stopDynamicChartAnalysis,
   }
 
   /*---------------gui----------------*/
@@ -317,8 +343,9 @@ onMounted(async () => {
 
   // 添加目录层级
   const settings2DFolder = gui.addFolder('2D Settings')
-  const sectionAnalysis = gui.addFolder('Section Analysis')
-  const isolineAnalysis = gui.addFolder('Isoline Analysis')
+  const sectionAnalysisFolder = gui.addFolder('Section Analysis')
+  const isolineAnalysisFolder = gui.addFolder('Isoline Analysis')
+  const dynamicChartAnalysisFolder = gui.addFolder('Dynamic Chart Analysis')
 
   settings2DFolder
       .add(renderSettings, "renderType", {
@@ -348,27 +375,50 @@ onMounted(async () => {
           renderOptions.peak = 32000
         }
       })
-  sectionAnalysis
+  sectionAnalysisFolder
       .add(viewModel, 'initSectionAnalysis')
       .name('start section analysis')
       .onChange(() => {
         viewModel.hideExtrudedHeight()
       })
-  sectionAnalysis
+  sectionAnalysisFolder
       .add(viewModel, 'stopSectionAnalysis')
       .name('stop section analysis')
       .onChange(() => {
         chartsSettings.showCharts_SectionAnalysis = false
         viewModel.showExtrudedHeight()
       })
-  isolineAnalysis
+  isolineAnalysisFolder
       .add(viewModel, 'startDynamicIsoline')
       .name('动态计算等值线')
-  isolineAnalysis
+  isolineAnalysisFolder
       .add(viewModel, 'stopDynamicIsoline')
       .name('停止计算等值线')
       .onChange(() => {
         stopDynamicIsoline()
+      })
+  dynamicChartAnalysisFolder
+      .add(viewModel, 'dynamicChartId', {
+        '102×38i': '527',
+        '102×39i': '678',
+        '102×17p': '203',
+        '102×18p': '123',
+      })
+      .name('选择井位')
+  dynamicChartAnalysisFolder
+      .add(viewModel, 'startDynamicChartAnalysis')
+      .name('开始绘制')
+      .onChange(() => {
+        let entity = viewer.entities.getById(String(viewModel.dynamicChartId))
+        entity.polygon.outline = new ConstantProperty(true)
+        entity.polygon.outlineWidth = new ConstantProperty(100)
+      })
+  dynamicChartAnalysisFolder
+      .add(viewModel, 'stopDynamicChartAnalysis')
+      .name('停止绘制')
+      .onChange(() => {
+        let entity = viewer.entities.getById(String(viewModel.dynamicChartId))
+        entity.polygon.outline = new ConstantProperty(false)
       })
   gui
       .add(renderOptions, "outline")
