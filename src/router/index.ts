@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/home/HomeIndex.vue'
 
 const PressureFiledMap = () => import('../views/fieldMap/PressureFiledMap.vue')
-const KrigingPressureFieldMap = () => import('@/components/pressure-fieldmaps/Kriging.vue')
+const KrigingPressureFieldMap = () => import('@/views/fieldMap/kriging/KrigingPressureFieldMap.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

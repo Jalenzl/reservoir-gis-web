@@ -1,5 +1,5 @@
 <template>
-  <div class="cesiumContainer-comp1" id="cesiumContainer-comp1">
+  <div class="cesiumContainer-comp3" id="cesiumContainer-comp3">
     <div class="toolbar" ref="toolbar"></div>
     <PressureColorBand v-show="colorBarSettings.isShow"/>
     <Transition name="fade">
@@ -25,15 +25,15 @@
 import * as dat from "dat.gui"
 import {Cartesian3, JulianDate, ConstantProperty} from "cesium"
 import {
-  usePressureStore_l1t1,
-  usePressureStore_l1t2,
-  usePressureStore_l1t3,
-  usePressureStore_l1t4,
-  usePressureStore_l1t5,
-  usePressureStore_l1t6,
-  usePressureStore_l1t7,
-  usePressureStore_l1t8,
-} from "@/stores/pressure/pressureLayer1";
+  usePressureStore_l3t1,
+  usePressureStore_l3t2,
+  usePressureStore_l3t3,
+  usePressureStore_l3t4,
+  usePressureStore_l3t5,
+  usePressureStore_l3t6,
+  usePressureStore_l3t7,
+  usePressureStore_l3t8,
+} from "@/stores/pressure/pressureLayer3";
 import {useBoundaryStore} from "@/stores/boundary/boundary";
 import {useSampleTime} from "@/stores/time/sampleTime";
 import {onMounted, reactive, ref, watch} from "vue";
@@ -56,23 +56,23 @@ type IMapInstance = map.IMapInstance
 type IsobandInterpolationData = analyze.isolineAnalysis.IsobandInterpolationData
 
 /*---------pinia------------*/
-const pressureStore_l1t1 = usePressureStore_l1t1()
-const pressureStore_l1t2 = usePressureStore_l1t2()
-const pressureStore_l1t3 = usePressureStore_l1t3()
-const pressureStore_l1t4 = usePressureStore_l1t4()
-const pressureStore_l1t5 = usePressureStore_l1t5()
-const pressureStore_l1t6 = usePressureStore_l1t6()
-const pressureStore_l1t7 = usePressureStore_l1t7()
-const pressureStore_l1t8 = usePressureStore_l1t8()
+const pressureStore_l3t1 = usePressureStore_l3t1()
+const pressureStore_l3t2 = usePressureStore_l3t2()
+const pressureStore_l3t3 = usePressureStore_l3t3()
+const pressureStore_l3t4 = usePressureStore_l3t4()
+const pressureStore_l3t5 = usePressureStore_l3t5()
+const pressureStore_l3t6 = usePressureStore_l3t6()
+const pressureStore_l3t7 = usePressureStore_l3t7()
+const pressureStore_l3t8 = usePressureStore_l3t8()
 
-let {getData_l1t1} = pressureStore_l1t1
-let {getData_l1t2} = pressureStore_l1t2
-let {getData_l1t3} = pressureStore_l1t3
-let {getData_l1t4} = pressureStore_l1t4
-let {getData_l1t5} = pressureStore_l1t5
-let {getData_l1t6} = pressureStore_l1t6
-let {getData_l1t7} = pressureStore_l1t7
-let {getData_l1t8} = pressureStore_l1t8
+let {getData_l3t1} = pressureStore_l3t1
+let {getData_l3t2} = pressureStore_l3t2
+let {getData_l3t3} = pressureStore_l3t3
+let {getData_l3t4} = pressureStore_l3t4
+let {getData_l3t5} = pressureStore_l3t5
+let {getData_l3t6} = pressureStore_l3t6
+let {getData_l3t7} = pressureStore_l3t7
+let {getData_l3t8} = pressureStore_l3t8
 
 const sampleTime = useSampleTime()
 let {timeArr} = storeToRefs(sampleTime)
@@ -99,7 +99,7 @@ const chartsSettings = reactive<ChartsSettinngs>({
 
 /*----------layer picker-----------*/
 const layerPicker = reactive({
-  layerNo: 1,
+  layerNo: 3,
 })
 const emit = defineEmits(["getLayerNo"])
 const emitLayerNo = () => {
@@ -109,7 +109,7 @@ const emitLayerNo = () => {
 onMounted(async () => {
   /*--------initializing map------------*/
 
-  let {viewer, scene, globe, clock} = CesiumTool.initMap("cesiumContainer-comp1")
+  let {viewer, scene, globe, clock} = CesiumTool.initMap("cesiumContainer-comp3")
   const mapInstance: IMapInstance = {
     viewer,
     scene,
@@ -119,14 +119,14 @@ onMounted(async () => {
 
   /*--------dealing with data---------*/
 
-  const pressure_l1t1_jsonData = await getData_l1t1()
-  const pressure_l1t2_jsonData = await getData_l1t2()
-  const pressure_l1t3_jsonData = await getData_l1t3()
-  const pressure_l1t4_jsonData = await getData_l1t4()
-  const pressure_l1t5_jsonData = await getData_l1t5()
-  const pressure_l1t6_jsonData = await getData_l1t6()
-  const pressure_l1t7_jsonData = await getData_l1t7()
-  const pressure_l1t8_jsonData = await getData_l1t8()
+  const pressure_l3t1_jsonData = await getData_l3t1()
+  const pressure_l3t2_jsonData = await getData_l3t2()
+  const pressure_l3t3_jsonData = await getData_l3t3()
+  const pressure_l3t4_jsonData = await getData_l3t4()
+  const pressure_l3t5_jsonData = await getData_l3t5()
+  const pressure_l3t6_jsonData = await getData_l3t6()
+  const pressure_l3t7_jsonData = await getData_l3t7()
+  const pressure_l3t8_jsonData = await getData_l3t8()
 
 
   //get pressure data & coordinates5 position5 data
@@ -135,18 +135,18 @@ onMounted(async () => {
   let position5Arr = reactive<Cartesian3[][]>([])
 
   // layer1
-  let pressureArr_l1t1 = reactive<number[]>([])
-  let pressureArr_l1t2 = reactive<number[]>([])
-  let pressureArr_l1t3 = reactive<number[]>([])
-  let pressureArr_l1t4 = reactive<number[]>([])
-  let pressureArr_l1t5 = reactive<number[]>([])
-  let pressureArr_l1t6 = reactive<number[]>([])
-  let pressureArr_l1t7 = reactive<number[]>([])
-  let pressureArr_l1t8 = reactive<number[]>([])
+  let pressureArr_l3t1 = reactive<number[]>([])
+  let pressureArr_l3t2 = reactive<number[]>([])
+  let pressureArr_l3t3 = reactive<number[]>([])
+  let pressureArr_l3t4 = reactive<number[]>([])
+  let pressureArr_l3t5 = reactive<number[]>([])
+  let pressureArr_l3t6 = reactive<number[]>([])
+  let pressureArr_l3t7 = reactive<number[]>([])
+  let pressureArr_l3t8 = reactive<number[]>([])
 
   // get l1t1 pressure data & coordinates data
-  featureEach(pressure_l1t1_jsonData, currentFeature => {
-    pressureArr_l1t1.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t1_jsonData, currentFeature => {
+    pressureArr_l3t1.push(currentFeature.properties.pressure)
     let cordTempArr = []
     let position5Temp = null
     currentFeature.geometry.coordinates[0][0].forEach(item => {
@@ -158,65 +158,65 @@ onMounted(async () => {
   })
 
   // get l1t2 pressure data
-  featureEach(pressure_l1t2_jsonData, currentFeature => {
-    pressureArr_l1t2.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t2_jsonData, currentFeature => {
+    pressureArr_l3t2.push(currentFeature.properties.pressure)
   })
 
   // get l1t3 pressure data
-  featureEach(pressure_l1t3_jsonData, currentFeature => {
-    pressureArr_l1t3.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t3_jsonData, currentFeature => {
+    pressureArr_l3t3.push(currentFeature.properties.pressure)
   })
 
   // get l1t4 pressure data
-  featureEach(pressure_l1t4_jsonData, currentFeature => {
-    pressureArr_l1t4.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t4_jsonData, currentFeature => {
+    pressureArr_l3t4.push(currentFeature.properties.pressure)
   })
 
   // get l1t5 pressure data
-  featureEach(pressure_l1t5_jsonData, currentFeature => {
-    pressureArr_l1t5.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t5_jsonData, currentFeature => {
+    pressureArr_l3t5.push(currentFeature.properties.pressure)
   })
 
   // get l1t6 pressure data
-  featureEach(pressure_l1t6_jsonData, currentFeature => {
-    pressureArr_l1t6.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t6_jsonData, currentFeature => {
+    pressureArr_l3t6.push(currentFeature.properties.pressure)
   })
 
   // get l1t7 pressure data
-  featureEach(pressure_l1t7_jsonData, currentFeature => {
-    pressureArr_l1t7.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t7_jsonData, currentFeature => {
+    pressureArr_l3t7.push(currentFeature.properties.pressure)
   })
 
   // get l1t8 pressure data
-  featureEach(pressure_l1t8_jsonData, currentFeature => {
-    pressureArr_l1t8.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t8_jsonData, currentFeature => {
+    pressureArr_l3t8.push(currentFeature.properties.pressure)
   })
 
   // tileNum
-  let tileNum = pressureArr_l1t1.length
+  let tileNum = pressureArr_l3t1.length
 
   //sample pressure array
-  const pressrueArrList_l1: number[][] = [
-    pressureArr_l1t1,
-    pressureArr_l1t2,
-    pressureArr_l1t3,
-    pressureArr_l1t4,
-    pressureArr_l1t5,
-    pressureArr_l1t6,
-    pressureArr_l1t7,
-    pressureArr_l1t8,
+  const pressrueArrList_l3: number[][] = [
+    pressureArr_l3t1,
+    pressureArr_l3t2,
+    pressureArr_l3t3,
+    pressureArr_l3t4,
+    pressureArr_l3t5,
+    pressureArr_l3t6,
+    pressureArr_l3t7,
+    pressureArr_l3t8,
   ]
 
   const cesiumFieldMap = new CesiumFieldMap(
       viewer, // viewer
-      pressure_l1t1_jsonData, // geojson
+      pressure_l3t1_jsonData, // geojson
       clock, // clock
       "pressure", // propName
   )
 
-  const sampleData_l1: sampleData = {
+  const sampleData_l3: sampleData = {
     timeArray: timeArr.value,
-    propValArray: pressrueArrList_l1,
+    propValArray: pressrueArrList_l3,
     interpolationAlgorithm: "LAGRANGE",
     currentTime: JulianDate.toIso8601(clock.currentTime)
   }
@@ -245,13 +245,13 @@ onMounted(async () => {
               clearInterval(dynamicRenderController)
               viewer.entities.removeAll()
             }
-            staticRenderController = render.renderByFixedTime(cesiumFieldMap, sampleData_l1, renderOptions)
+            staticRenderController = render.renderByFixedTime(cesiumFieldMap, sampleData_l3, renderOptions)
           } else if (Number(val.renderType) === 2) {
             if (staticRenderController) {
               clearInterval(staticRenderController)
               viewer.entities.removeAll()
             }
-            dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l1, renderOptions)
+            dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l3, renderOptions)
           }
         },
         {immediate: true}
@@ -267,7 +267,7 @@ onMounted(async () => {
   let handler = null
   let mySectionChart = null
   const startSectionAnalysis = async () => {
-    const sectionAnalysis: SectionAnalysis = new SectionAnalysis(viewer, clock, pressure_l1t1_jsonData, sampleData_l1)
+    const sectionAnalysis: SectionAnalysis = new SectionAnalysis(viewer, clock, pressure_l3t1_jsonData, sampleData_l3)
     await sectionAnalysis.init(position5Arr, sectionCharts.value as HTMLCanvasElement, handler)
     mySectionChart = sectionAnalysis.mySectionChart
   }
@@ -276,7 +276,7 @@ onMounted(async () => {
   let dynamicIsolineController = null
 
   const startIsolineAnalysis = async () => {
-    const centoidPoints = await GeoJsonTool.getCentroid(cesiumFieldMap, sampleData_l1, coordinatesArr, cesiumFieldMap.getTileNum())
+    const centoidPoints = await GeoJsonTool.getCentroid(cesiumFieldMap, sampleData_l3, coordinatesArr, cesiumFieldMap.getTileNum())
     const isolineInterpData: IsobandInterpolationData = {
       centroidPoints: centoidPoints,
       cellSize: 0.0001,
@@ -307,7 +307,7 @@ onMounted(async () => {
   }
 
   /*---------dynamic chart analysis----------*/
-  const dynamicChartAnalysis = new DynamicChartAnalysis(dynamicCharts.value as HTMLCanvasElement, cesiumFieldMap, clock, sampleData_l1)
+  const dynamicChartAnalysis = new DynamicChartAnalysis(dynamicCharts.value as HTMLCanvasElement, cesiumFieldMap, clock, sampleData_l3)
   const startDynamicChartAnalysis = async () => {
     chartsSettings.showCharts_DynamicPressure = true
     await dynamicChartAnalysis.init(viewModel.dynamicChartId)
@@ -321,7 +321,7 @@ onMounted(async () => {
   /*--------------viewModel-----------------*/
   const viewModel = {
     showExtrudedHeight() {
-      CesiumTool.showExtrudedHeight(cesiumFieldMap, sampleData_l1)
+      CesiumTool.showExtrudedHeight(cesiumFieldMap, sampleData_l3)
     },
     hideExtrudedHeight() {
       CesiumTool.hideExtrudedHeight(cesiumFieldMap)
@@ -460,7 +460,7 @@ onMounted(async () => {
 $bright-white-font: rgba(248, 249, 249, 1);
 $bright-white-bg: rgba(248, 249, 249, 0.9);
 
-.cesiumContainer-comp1 {
+.cesiumContainer-comp3 {
   position: relative;
   width: 100%;
   height: 99%;

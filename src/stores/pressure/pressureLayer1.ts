@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import {get} from '@/utils/request'
-import {reactive, ref} from "vue";
+import {reactive} from "vue";
 import {Cartesian3} from "cesium";
 import {FeatureCollection} from "@turf/helpers";
 import type {Position} from "@turf/helpers";

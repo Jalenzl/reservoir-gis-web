@@ -20,4 +20,6 @@ declare module "@/utils/interpolation/space-interpolation/kriging/kriging.js" {
 
     export declare function plot(canvas: HTMLCanvasElement, grid, xlim: number[], ylim: number[], colors: string[]): number;
 
+    export declare function predict(x, y, variogram: variogram): number;
+
 }

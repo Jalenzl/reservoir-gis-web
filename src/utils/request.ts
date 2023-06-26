@@ -4,7 +4,7 @@ import type {AxiosInstance, AxiosResponse} from 'axios'
 // 公共配置
 const instance: AxiosInstance = axios.create({
     baseURL: process.env.VITE_GEOSERVER_API, // 配置geoserver接口baseURL
-    timeout: 15000
+    timeout: 5000
 })
 
 // 在Promise中封装get post请求

@@ -10,15 +10,15 @@
 import * as dat from "dat.gui"
 import {onMounted, reactive, ref, watch} from "vue";
 import {
-  usePressureStore_l1t1,
-  usePressureStore_l1t2,
-  usePressureStore_l1t3,
-  usePressureStore_l1t4,
-  usePressureStore_l1t5,
-  usePressureStore_l1t6,
-  usePressureStore_l1t7,
-  usePressureStore_l1t8,
-} from "@/stores/pressure/pressureLayer1";
+  usePressureStore_l3t1,
+  usePressureStore_l3t2,
+  usePressureStore_l3t3,
+  usePressureStore_l3t4,
+  usePressureStore_l3t5,
+  usePressureStore_l3t6,
+  usePressureStore_l3t7,
+  usePressureStore_l3t8,
+} from "@/stores/pressure/pressureLayer3";
 import {useBoundaryStore} from "@/stores/boundary/boundary";
 import {WGS84_GeoJson} from "@/utils/GeoJsonTool/WGS84_GeoJson";
 import {KrigingFieldMap} from "@/utils/GridFieldMap/KrigingFieldMap";
@@ -33,31 +33,40 @@ import PressureGradientColorBand from "@/components/colorBand/PressureGradientCo
 type sampleData = interp.CesiumInterpolation.CesiumInterpSampleData
 
 /*---------pinia------------*/
-const pressureStore_l1t1 = usePressureStore_l1t1()
-const pressureStore_l1t2 = usePressureStore_l1t2()
-const pressureStore_l1t3 = usePressureStore_l1t3()
-const pressureStore_l1t4 = usePressureStore_l1t4()
-const pressureStore_l1t5 = usePressureStore_l1t5()
-const pressureStore_l1t6 = usePressureStore_l1t6()
-const pressureStore_l1t7 = usePressureStore_l1t7()
-const pressureStore_l1t8 = usePressureStore_l1t8()
+const pressureStore_l3t1 = usePressureStore_l3t1()
+const pressureStore_l3t2 = usePressureStore_l3t2()
+const pressureStore_l3t3 = usePressureStore_l3t3()
+const pressureStore_l3t4 = usePressureStore_l3t4()
+const pressureStore_l3t5 = usePressureStore_l3t5()
+const pressureStore_l3t6 = usePressureStore_l3t6()
+const pressureStore_l3t7 = usePressureStore_l3t7()
+const pressureStore_l3t8 = usePressureStore_l3t8()
 const boundaryStore = useBoundaryStore()
 const sampleTime = useSampleTime()
 
-let {getData_l1t1} = pressureStore_l1t1
-let {getData_l1t2} = pressureStore_l1t2
-let {getData_l1t3} = pressureStore_l1t3
-let {getData_l1t4} = pressureStore_l1t4
-let {getData_l1t5} = pressureStore_l1t5
-let {getData_l1t6} = pressureStore_l1t6
-let {getData_l1t7} = pressureStore_l1t7
-let {getData_l1t8} = pressureStore_l1t8
+let {getData_l3t1} = pressureStore_l3t1
+let {getData_l3t2} = pressureStore_l3t2
+let {getData_l3t3} = pressureStore_l3t3
+let {getData_l3t4} = pressureStore_l3t4
+let {getData_l3t5} = pressureStore_l3t5
+let {getData_l3t6} = pressureStore_l3t6
+let {getData_l3t7} = pressureStore_l3t7
+let {getData_l3t8} = pressureStore_l3t8
 let {getBoundaryLine} = boundaryStore
 
 let {timeArr} = storeToRefs(sampleTime)
 
 const krigingCanvas = ref<HTMLCanvasElement | null>(null)
 const toolbar = ref<HTMLDivElement | null>(null)
+
+/*----------layer picker-----------*/
+const layerPicker = reactive({
+  layerNo: 3,
+})
+const emit = defineEmits(["getLayerNo"])
+const emitLayerNo = () => {
+  emit("getLayerNo", Number(layerPicker.layerNo))
+}
 
 onMounted(async () => {
   /*--------initializing map------------*/
@@ -72,14 +81,14 @@ onMounted(async () => {
 
   /*--------dealing with data---------*/
 
-  const pressure_l1t1_jsonData = await getData_l1t1()
-  const pressure_l1t2_jsonData = await getData_l1t2()
-  const pressure_l1t3_jsonData = await getData_l1t3()
-  const pressure_l1t4_jsonData = await getData_l1t4()
-  const pressure_l1t5_jsonData = await getData_l1t5()
-  const pressure_l1t6_jsonData = await getData_l1t6()
-  const pressure_l1t7_jsonData = await getData_l1t7()
-  const pressure_l1t8_jsonData = await getData_l1t8()
+  const pressure_l3t1_jsonData = await getData_l3t1()
+  const pressure_l3t2_jsonData = await getData_l3t2()
+  const pressure_l3t3_jsonData = await getData_l3t3()
+  const pressure_l3t4_jsonData = await getData_l3t4()
+  const pressure_l3t5_jsonData = await getData_l3t5()
+  const pressure_l3t6_jsonData = await getData_l3t6()
+  const pressure_l3t7_jsonData = await getData_l3t7()
+  const pressure_l3t8_jsonData = await getData_l3t8()
 
 
   //get pressure data & coordinates5 position5 data
@@ -88,18 +97,18 @@ onMounted(async () => {
   let position5Arr = reactive<Cartesian3[][]>([])
 
 // layer1
-  let pressureArr_l1t1 = reactive<number[]>([])
-  let pressureArr_l1t2 = reactive<number[]>([])
-  let pressureArr_l1t3 = reactive<number[]>([])
-  let pressureArr_l1t4 = reactive<number[]>([])
-  let pressureArr_l1t5 = reactive<number[]>([])
-  let pressureArr_l1t6 = reactive<number[]>([])
-  let pressureArr_l1t7 = reactive<number[]>([])
-  let pressureArr_l1t8 = reactive<number[]>([])
+  let pressureArr_l3t1 = reactive<number[]>([])
+  let pressureArr_l3t2 = reactive<number[]>([])
+  let pressureArr_l3t3 = reactive<number[]>([])
+  let pressureArr_l3t4 = reactive<number[]>([])
+  let pressureArr_l3t5 = reactive<number[]>([])
+  let pressureArr_l3t6 = reactive<number[]>([])
+  let pressureArr_l3t7 = reactive<number[]>([])
+  let pressureArr_l3t8 = reactive<number[]>([])
 
   // get l1t1 pressure data & coordinates data
-  featureEach(pressure_l1t1_jsonData, currentFeature => {
-    pressureArr_l1t1.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t1_jsonData, currentFeature => {
+    pressureArr_l3t1.push(currentFeature.properties.pressure)
     let cordTempArr = []
     let position5Temp = null
     currentFeature.geometry.coordinates[0][0].forEach(item => {
@@ -111,58 +120,58 @@ onMounted(async () => {
   })
 
   // get l1t2 pressure data
-  featureEach(pressure_l1t2_jsonData, currentFeature => {
-    pressureArr_l1t2.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t2_jsonData, currentFeature => {
+    pressureArr_l3t2.push(currentFeature.properties.pressure)
   })
 
   // get l1t3 pressure data
-  featureEach(pressure_l1t3_jsonData, currentFeature => {
-    pressureArr_l1t3.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t3_jsonData, currentFeature => {
+    pressureArr_l3t3.push(currentFeature.properties.pressure)
   })
 
   // get l1t4 pressure data
-  featureEach(pressure_l1t4_jsonData, currentFeature => {
-    pressureArr_l1t4.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t4_jsonData, currentFeature => {
+    pressureArr_l3t4.push(currentFeature.properties.pressure)
   })
 
   // get l1t5 pressure data
-  featureEach(pressure_l1t5_jsonData, currentFeature => {
-    pressureArr_l1t5.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t5_jsonData, currentFeature => {
+    pressureArr_l3t5.push(currentFeature.properties.pressure)
   })
 
   // get l1t6 pressure data
-  featureEach(pressure_l1t6_jsonData, currentFeature => {
-    pressureArr_l1t6.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t6_jsonData, currentFeature => {
+    pressureArr_l3t6.push(currentFeature.properties.pressure)
   })
 
   // get l1t7 pressure data
-  featureEach(pressure_l1t7_jsonData, currentFeature => {
-    pressureArr_l1t7.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t7_jsonData, currentFeature => {
+    pressureArr_l3t7.push(currentFeature.properties.pressure)
   })
 
   // get l1t8 pressure data
-  featureEach(pressure_l1t8_jsonData, currentFeature => {
-    pressureArr_l1t8.push(currentFeature.properties.pressure)
+  featureEach(pressure_l3t8_jsonData, currentFeature => {
+    pressureArr_l3t8.push(currentFeature.properties.pressure)
   })
 
   // tileNum
-  let tileNum = pressureArr_l1t1.length
+  let tileNum = pressureArr_l3t1.length
 
-  //sample pressure array
-  const pressrueArrList_l1: number[][] = [
-    pressureArr_l1t1,
-    pressureArr_l1t2,
-    pressureArr_l1t3,
-    pressureArr_l1t4,
-    pressureArr_l1t5,
-    pressureArr_l1t6,
-    pressureArr_l1t7,
-    pressureArr_l1t8,
+  //sample pressure arra3
+  const pressrueArrList_l3: number[][] = [
+    pressureArr_l3t1,
+    pressureArr_l3t2,
+    pressureArr_l3t3,
+    pressureArr_l3t4,
+    pressureArr_l3t5,
+    pressureArr_l3t6,
+    pressureArr_l3t7,
+    pressureArr_l3t8,
   ]
 
-  const sampleData_l1: sampleData = {
+  const sampleData_l3: sampleData = {
     timeArray: timeArr.value,
-    propValArray: pressrueArrList_l1,
+    propValArray: pressrueArrList_l3,
     interpolationAlgorithm: "LAGRANGE",
     currentTime: JulianDate.toIso8601(clock.currentTime)
   }
@@ -170,11 +179,11 @@ onMounted(async () => {
   /*------------kriging interpolation-------------*/
   let renderController = null
   const gridBoundaryLine = await getBoundaryLine()
-  const krigingFieldMap_l1: KrigingFieldMap = new KrigingFieldMap(
+  const krigingFieldMap_l3: KrigingFieldMap = new KrigingFieldMap(
       viewer,
       krigingCanvas.value as HTMLCanvasElement,
       gridBoundaryLine,
-      pressure_l1t1_jsonData,
+      pressure_l3t1_jsonData,
       "boundary_line_01",
       "pressure"
   );
@@ -212,7 +221,7 @@ onMounted(async () => {
       let currentTime = ref(animationViewModel.timeLabel);
       renderController = setInterval(() => {
         currentTime.value = animationViewModel.timeLabel;
-      }, 33);
+      }, 70);
 
       krigingFieldMap.init();
 
@@ -234,22 +243,10 @@ onMounted(async () => {
     })
   }
 
+  await startKrigingInterpolation(krigingFieldMap_l3, pressure_l3t1_jsonData, sampleData_l3)
+
   // await startKrigingInterpolation(krigingFieldMap_l1, pressure_l1t1_jsonData, sampleData_l1)
 
-  /*---------------GUI object------------*/
-  const GUI_Object = {
-    renderLayerNum: 0,
-    start () {
-      switch (this.renderLayerNum) {
-        case 1:
-          startKrigingInterpolation(krigingFieldMap_l1, pressure_l1t1_jsonData, sampleData_l1)
-          break
-      }
-    },
-    stop() {
-      stopKrigingInterpolation([krigingFieldMap_l1])
-    }
-  }
 
   /*-----------------GUI-----------------*/
   const initGUI = () => {
@@ -259,12 +256,16 @@ onMounted(async () => {
     toolbar.value.appendChild(gui.domElement)
 
     gui
-        .add(GUI_Object, "renderLayerNum", {
+        .add(layerPicker, "layerNo", {
           "layer1": 1,
+          "layer3": 3,
+          "layer4": 4,
+          "layer6": 6,
+          "layer7": 7,
         })
         .name("选择插值层数")
         .onChange(() => {
-          GUI_Object.start()
+          emitLayerNo()
         })
   }
 
@@ -276,8 +277,8 @@ onMounted(async () => {
 <style scoped lang="scss">
 .kriging-cesium-container {
   position: relative;
-  width: 100vw;
-  height: 99vh;
+  width: 100%;
+  height: 97vh;
 
   .toolbar {
     position: absolute;

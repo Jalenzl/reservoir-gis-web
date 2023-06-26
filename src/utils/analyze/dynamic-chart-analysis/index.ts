@@ -91,6 +91,27 @@ export class DynamicChartAnalysis {
         }
 
         updateChart()
+
+        let epsilon = this.cesiumFieldMap.viewer.clockViewModel.multiplier / 2
+        let interval_i = setInterval(() => {
+            if (JulianDate.equalsEpsilon(this.clock.currentTime, this.clock.stopTime, epsilon)) {
+                this.myPropValTimeChart.setOption({
+                    dataZoom: [
+                        {
+                            type: 'inside',
+                            start: 0,
+                            end: 20
+                        },
+                        {
+                            start: 0,
+                            end: 20
+                        },
+                    ]
+                })
+                clearInterval(interval_i)
+                clearInterval(this.dynamicPressureInterval)
+            }
+        }, 300)
     }
 
     public async init(tileId: number) {

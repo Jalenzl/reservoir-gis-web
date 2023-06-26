@@ -40,7 +40,7 @@ $bright-white: rgba(248, 249, 249, 1);
 
 .colorLegend {
   position: absolute;
-  right: 15px;
+  right: 105px;
   bottom: 35px;
   z-index: 1;
   width: 400px;
