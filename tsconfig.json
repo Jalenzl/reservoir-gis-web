@@ -10,7 +10,7 @@
   ],
   "compilerOptions": {
     "types": [
-      "element-plus/global",
+      "element-plus/global.d.ts",
       "node"
     ],
     "allowJs": true,
