@@ -31,10 +31,6 @@
   </div>
 </template>
 
-<script setup>
-
-</script>
-
 <style scoped lang="scss">
 $bright-white: rgba(248, 249, 249, 1);
 

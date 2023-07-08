@@ -13,7 +13,8 @@
       "element-plus/global",
       "node"
     ],
-    "allowJs": true
+    "allowJs": true,
+    "skipLibCheck": true,
   },
   "include": [
     "env.d.ts",
