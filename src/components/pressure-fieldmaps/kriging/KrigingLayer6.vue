@@ -26,7 +26,7 @@ import {KrigingFieldMap} from "@/utils/GridFieldMap/KrigingFieldMap";
 import {useSampleTime} from "@/stores/time/sampleTime";
 import {CesiumTool} from "@/utils/CesiumTool";
 import {storeToRefs} from "pinia";
-import {FeatureCollection, Position} from "@turf/helpers/dist/js/lib/geojson";
+import {FeatureCollection, Position} from "@turf/helpers";
 import {Cartesian3, JulianDate} from "cesium";
 import {featureEach} from "@turf/meta";
 import PressureGradientColorBand from "@/components/colorBand/PressureGradientColorBand.vue";

@@ -14,7 +14,6 @@
       "node"
     ],
     "allowJs": true,
-    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [
