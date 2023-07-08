@@ -15,10 +15,17 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
   },
   "include": [
     "env.d.ts",
     "src/**/*.ts",
+    "src/**/*.d.ts",
     "src/**/*.js",
     "src/**/*.vue",
   ]

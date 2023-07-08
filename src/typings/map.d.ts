@@ -1,6 +1,5 @@
-import {Viewer, Scene, Globe, Clock} from 'cesium';
-
 declare namespace map {
+  import {Viewer, Scene, Globe, Clock} from 'cesium';
 
   export declare interface IMapInstance {
       viewer: Viewer;

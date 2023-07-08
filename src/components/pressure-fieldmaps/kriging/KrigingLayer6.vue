@@ -32,6 +32,7 @@ import {featureEach} from "@turf/meta";
 import PressureGradientColorBand from "@/components/colorBand/PressureGradientColorBand.vue";
 
 type sampleData = interp.CesiumInterpolation.CesiumInterpSampleData
+type IMapInstance = map.IMapInstance
 
 /*---------pinia------------*/
 const pressureStore_l6t1 = usePressureStore_l6t1()
