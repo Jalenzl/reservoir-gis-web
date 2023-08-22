@@ -3,6 +3,7 @@ import HomeView from '@/views/home/HomeIndex.vue'
 
 const PressureFiledMap = () => import('../views/fieldMap/PressureFiledMap.vue')
 const KrigingPressureFieldMap = () => import('@/views/fieldMap/kriging/KrigingPressureFieldMap.vue')
+const FlowVectorThematicMap = () => import('@/views/thematic/FlowVelocity.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,6 +26,11 @@ const router = createRouter({
       path: '/krigingPressureFiledMap',
       name: 'KrigingPressureFiledMap',
       component: KrigingPressureFieldMap
+    },
+    {
+      path: '/flowVectorThematicMap',
+      name: 'FlowVectorThematicMap',
+      component: FlowVectorThematicMap
     },
   ]
 })

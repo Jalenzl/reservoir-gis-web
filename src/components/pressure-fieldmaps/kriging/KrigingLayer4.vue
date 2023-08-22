@@ -110,7 +110,7 @@ onMounted(async () => {
   // get l1t1 pressure data & coordinates data
   featureEach(pressure_l4t1_jsonData, currentFeature => {
     pressureArr_l4t1.push(currentFeature.properties.pressure)
-    let cordTempArr = []
+    let cordTempArr:any[] = []
     let position5Temp = null
     currentFeature.geometry.coordinates[0][0].forEach(item => {
       cordTempArr.push(...item)

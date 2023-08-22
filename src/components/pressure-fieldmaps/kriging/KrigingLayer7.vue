@@ -29,6 +29,7 @@ import {FeatureCollection, Position} from "@turf/helpers";
 import {Cartesian3, JulianDate} from "cesium";
 import {featureEach} from "@turf/meta";
 import PressureGradientColorBand from "@/components/colorBand/PressureGradientColorBand.vue";
+import { number } from "echarts";
 
 type sampleData = interp.CesiumInterpolation.CesiumInterpSampleData
 type IMapInstance = map.IMapInstance
@@ -110,9 +111,9 @@ onMounted(async () => {
   // get l1t1 pressure data & coordinates data
   featureEach(pressure_l7t1_jsonData, currentFeature => {
     pressureArr_l7t1.push(currentFeature.properties.pressure)
-    let cordTempArr = []
+    let cordTempArr:number[] = []
     let position5Temp = null
-    currentFeature.geometry.coordinates[0][0].forEach(item => {
+    currentFeature.geometry.coordinates[0][0].forEach((item:number[]) => {
       cordTempArr.push(...item)
       position5Temp = Cartesian3.fromDegreesArray(cordTempArr)
     })

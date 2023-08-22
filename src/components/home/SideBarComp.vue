@@ -43,7 +43,7 @@
           </el-icon>
           <span>专题图表</span>
         </template>
-        <el-menu-item index="/table1">压力</el-menu-item>
+        <el-menu-item index="/table1">流场分析</el-menu-item>
       </el-sub-menu>
       <el-sub-menu index="4">
         <template #title>
