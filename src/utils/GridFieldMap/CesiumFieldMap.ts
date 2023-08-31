@@ -8,6 +8,7 @@ import {reactive, watch} from "vue";
 type SampleData = interp.CesiumInterpolation.CesiumInterpSampleData
 type Response = interp.CesiumInterpolation.CesiumInterpResponse
 type Options = interp.CesiumInterpolation.CesiumInterpOptions
+type RenderOptions = interp.CesiumInterpolation.CesiumInterpRenderOptions
 
 
 export class CesiumFieldMap extends GridFieldMap {
@@ -58,7 +59,7 @@ export class CesiumFieldMap extends GridFieldMap {
         }
     }
 
-    public update(propValArr: number[], options?: Options, extrudedRatio: number = 700, rangeArr: number[] = [7084, 9749, 12413, 15078, 17743, 20407, 23072, 25737, 28401]) {
+    public update(propValArr: number[], options: Options, renderOptions: RenderOptions) {
         const tileNum: number = this.getTileNum()
 
         if (propValArr) {
@@ -68,12 +69,12 @@ export class CesiumFieldMap extends GridFieldMap {
 
                 if (entity.polygon) {
                     // 赋材质
-                    entity.polygon.material = getColor_pressure(1, propVal, rangeArr)
+                    entity.polygon.material = getColor_pressure(1, propVal, renderOptions.rangeArr)
                     // 赋高度
-                    entity.polygon.extrudedHeight = new ConstantProperty(propVal / extrudedRatio)
+                    entity.polygon.extrudedHeight = new ConstantProperty(propVal / renderOptions.extrudedRatio)
                     // 赋描述
-                    const pressureStr = String(propVal?.toFixed(2))
-                    entity.description = new ConstantProperty("pressure:" + pressureStr + "kpa")
+                    const propValStr = String(propVal?.toFixed(2))
+                    entity.description = new ConstantProperty(`${this._propName}: ` + propValStr + renderOptions.unit)
                     // 赋属性
                     let pb = new PropertyBag()
                     pb.addProperty(`${this._propName}`, propVal)
@@ -88,7 +89,7 @@ export class CesiumFieldMap extends GridFieldMap {
                             const bottom = newOptions.bottom
                             const peak = newOptions.peak
                             if (bottom < peak) {
-                                entity.show = propVal > (bottom || 0) && propVal < (peak || 10e6)
+                                entity.show = propVal >= (bottom || 0) && propVal <= (peak || 10e6)
                             } else {
                                 alert("等值线最大值必须大于最小值!")
                             }

@@ -41,7 +41,7 @@ const renderSettings = reactive({
 
 /*----------layer picker-----------*/
 const layerPicker = reactive({
-  layerNo: 1,
+  layerNo: 7,
 })
 const emit = defineEmits(["getLayerNo"])
 const emitLayerNo = () => {
@@ -92,39 +92,39 @@ onMounted(async () => {
     }
   }
 
-  // layer1
-  let vOilArr_l1t1 = reactive<number[]>([])
-  let vOilArr_l1t2 = reactive<number[]>([])
-  let vOilArr_l1t3 = reactive<number[]>([])
-  let vOilArr_l1t4 = reactive<number[]>([])
-  let vOilArr_l1t5 = reactive<number[]>([])
-  let vOilArr_l1t6 = reactive<number[]>([])
-  let vOilArr_l1t7 = reactive<number[]>([])
-  let vOilArr_l1t8 = reactive<number[]>([])
+  // layer3
+  let vOilArr_l7t1 = reactive<number[]>([])
+  let vOilArr_l7t2 = reactive<number[]>([])
+  let vOilArr_l7t3 = reactive<number[]>([])
+  let vOilArr_l7t4 = reactive<number[]>([])
+  let vOilArr_l7t5 = reactive<number[]>([])
+  let vOilArr_l7t6 = reactive<number[]>([])
+  let vOilArr_l7t7 = reactive<number[]>([])
+  let vOilArr_l7t8 = reactive<number[]>([])
 
-  vOilArr_l1t1.push(...await getVelocityData(1, 1, 'oil'))
-  vOilArr_l1t2.push(...await getVelocityData(2, 1, 'oil'))
-  vOilArr_l1t3.push(...await getVelocityData(3, 1, 'oil'))
-  vOilArr_l1t4.push(...await getVelocityData(4, 1, 'oil'))
-  vOilArr_l1t5.push(...await getVelocityData(5, 1, 'oil'))
-  vOilArr_l1t6.push(...await getVelocityData(6, 1, 'oil'))
-  vOilArr_l1t7.push(...await getVelocityData(7, 1, 'oil'))
-  vOilArr_l1t8.push(...await getVelocityData(8, 1, 'oil'))
+  vOilArr_l7t1.push(...await getVelocityData(1, 7, 'oil'))
+  vOilArr_l7t2.push(...await getVelocityData(2, 7, 'oil'))
+  vOilArr_l7t3.push(...await getVelocityData(3, 7, 'oil'))
+  vOilArr_l7t4.push(...await getVelocityData(4, 7, 'oil'))
+  vOilArr_l7t5.push(...await getVelocityData(5, 7, 'oil'))
+  vOilArr_l7t6.push(...await getVelocityData(6, 7, 'oil'))
+  vOilArr_l7t7.push(...await getVelocityData(7, 7, 'oil'))
+  vOilArr_l7t8.push(...await getVelocityData(8, 7, 'oil'))
 
   featureEach(pressure_l1t1_jsonData, (currentFeature, featureIndex) => {
-    currentFeature.properties.pressure = vOilArr_l1t1[featureIndex]
+    currentFeature.properties.pressure = vOilArr_l7t1[featureIndex]
   })
 
   //sample velocity array
-  const vOilArrList_l1: number[][] = [
-    vOilArr_l1t1,
-    vOilArr_l1t2,
-    vOilArr_l1t3,
-    vOilArr_l1t4,
-    vOilArr_l1t5,
-    vOilArr_l1t6,
-    vOilArr_l1t7,
-    vOilArr_l1t8,
+  const vOilArrList_l7: number[][] = [
+    vOilArr_l7t1,
+    vOilArr_l7t2,
+    vOilArr_l7t3,
+    vOilArr_l7t4,
+    vOilArr_l7t5,
+    vOilArr_l7t6,
+    vOilArr_l7t7,
+    vOilArr_l7t8,
   ]
 
   const cesiumFieldMap = new CesiumFieldMap(
@@ -134,9 +134,9 @@ onMounted(async () => {
       "v_oil", // propName
   )
 
-  const sampleData_l1: sampleData = {
+  const sampleData_l7: sampleData = {
     timeArray: timeArr.value,
-    propValArray: vOilArrList_l1,
+    propValArray: vOilArrList_l7,
     interpolationAlgorithm: "LAGRANGE",
     currentTime: JulianDate.toIso8601(clock.currentTime)
   }
@@ -169,13 +169,13 @@ onMounted(async () => {
               clearInterval(dynamicRenderController)
               viewer.entities.removeAll()
             }
-            staticRenderController = render.renderByFixedTime(cesiumFieldMap, sampleData_l1, contourOptions, renderOptions)
+            staticRenderController = render.renderByFixedTime(cesiumFieldMap, sampleData_l7, contourOptions, renderOptions)
           } else if (Number(val.renderType) === 2) {
             if (staticRenderController) {
               clearInterval(staticRenderController)
               viewer.entities.removeAll()
             }
-            dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l1, contourOptions, renderOptions)
+            dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l7, contourOptions, renderOptions)
           }
         },
         {immediate: true}

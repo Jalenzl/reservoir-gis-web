@@ -18,6 +18,12 @@ declare namespace interp{
             peak: number
             outline?: boolean
         }
+
+        export declare interface CesiumInterpRenderOptions {
+            rangeArr: number[]
+            extrudedRatio: number
+            unit: string
+        }
     }
 }
 

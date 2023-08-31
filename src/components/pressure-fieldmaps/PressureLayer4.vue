@@ -54,6 +54,7 @@ type Options = interp.CesiumInterpolation.CesiumInterpOptions
 type ChartsSettinngs = charts.ChartsSettings
 type IMapInstance = map.IMapInstance
 type IsobandInterpolationData = analyze.isolineAnalysis.IsobandInterpolationData
+type RenderOption = interp.CesiumInterpolation.CesiumInterpRenderOptions
 
 /*---------pinia------------*/
 const pressureStore_l4t1 = usePressureStore_l4t1()
@@ -222,12 +223,17 @@ onMounted(async () => {
   }
 
   /*-------------dealing with render settings----------*/
-  const renderOptions = reactive<Options>({ // 等高线设置
+  const contourOptions = reactive<Options>({ // 等高线设置
     bottom: 0,
     peak: 32000,
     outline: false,
   })
 
+  const renderOptions: RenderOption = {
+    rangeArr: [10621, 12432, 13000, 14600, 16770, 18940, 21110, 23279, 25449, 27619],
+    extrudedRatio: 700,
+    unit: "kpa",
+  }
 
   /*--------------rendering-----------------*/
   const mainRendering = () => {
@@ -245,13 +251,13 @@ onMounted(async () => {
               clearInterval(dynamicRenderController)
               viewer.entities.removeAll()
             }
-            staticRenderController = render.renderByFixedTime(cesiumFieldMap, sampleData_l4, renderOptions)
+            staticRenderController = render.renderByFixedTime(cesiumFieldMap, sampleData_l4, contourOptions, renderOptions)
           } else if (Number(val.renderType) === 2) {
             if (staticRenderController) {
               clearInterval(staticRenderController)
               viewer.entities.removeAll()
             }
-            dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l4, renderOptions)
+            dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l4, contourOptions, renderOptions)
           }
         },
         {immediate: true}
@@ -377,26 +383,26 @@ onMounted(async () => {
         "timeInterpolation": 2,
       })
   settings2DFolder
-      .add(renderOptions, "bottom")
+      .add(contourOptions, "bottom")
       .min(0)
       .max(32000)
       .step(10)
       .name("调整等值线下界")
       .onChange(() => {
-        if (renderOptions.bottom >= renderOptions.peak) {
-          renderOptions.bottom = 0
+        if (contourOptions.bottom >= contourOptions.peak) {
+          contourOptions.bottom = 0
         }
       })
 
   settings2DFolder
-      .add(renderOptions, "peak")
+      .add(contourOptions, "peak")
       .min(0)
       .max(32000)
       .step(10)
       .name("调整等值线上界")
       .onChange(() => {
-        if (renderOptions.bottom >= renderOptions.peak) {
-          renderOptions.peak = 32000
+        if (contourOptions.bottom >= contourOptions.peak) {
+          contourOptions.peak = 32000
         }
       })
   sectionAnalysisFolder
@@ -445,7 +451,7 @@ onMounted(async () => {
         entity.polygon.outline = new ConstantProperty(false)
       })
   gui
-      .add(renderOptions, "outline")
+      .add(contourOptions, "outline")
       .name("是否显示网格边框线")
 
   gui

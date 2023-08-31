@@ -7,6 +7,7 @@ import type {Viewer, Clock} from "cesium";
 
 type SampleData = interp.CesiumInterpolation.CesiumInterpSampleData
 type Options = interp.CesiumInterpolation.CesiumInterpOptions
+type RenderOptions = interp.CesiumInterpolation.CesiumInterpRenderOptions
 
 export class Render {
     constructor(public _viewer: Viewer, public _clock: Clock) {
@@ -30,7 +31,7 @@ export class Render {
         this._clock = value;
     }
 
-    public renderByTimeInterpolation(cesiumFieldMap: CesiumFieldMap, sampleData: SampleData, options: Options, extrudedRatio: number = 700, rangeArr: number[] = [7084, 9749, 12413, 15078, 17743, 20407, 23072, 25737, 28401]): ReturnType<typeof setInterval> {
+    public renderByTimeInterpolation(cesiumFieldMap: CesiumFieldMap, sampleData: SampleData, options: Options, renderOptions: RenderOptions): ReturnType<typeof setInterval> {
         const animationViewModel = this.viewer.animation.viewModel;
         let currentTime = ref<string>(animationViewModel.timeLabel);
         const renderController: ReturnType<typeof setInterval> = setInterval(() => {
@@ -38,7 +39,7 @@ export class Render {
         }, 300);
 
         const firstTickPressure = GeoJsonTool.getPropValue(cesiumFieldMap.geoJson, "pressure")
-        cesiumFieldMap.init(firstTickPressure)
+        cesiumFieldMap.init(firstTickPressure, options)
         cesiumFieldMap.addWell()
 
         watch(currentTime, async (newVal, oldVal) => {
@@ -49,9 +50,9 @@ export class Render {
 
                 try {
                     const res = await cesiumFieldMap.getInterpolatedData(sampleData)
-                    const propValArr = res?.currentPropValArr
+                    const propValArr = res?.currentPropValArr.map((item: number) => item < 0 ? 0 : item)
                     if (propValArr) {
-                        cesiumFieldMap.update(propValArr, options, extrudedRatio, rangeArr)
+                        cesiumFieldMap.update(propValArr, options, renderOptions)
                     }
                 } catch (e) {
                     console.error(e)
@@ -64,7 +65,7 @@ export class Render {
 
     }
 
-    public renderByFixedTime(cesiumFieldMap: CesiumFieldMap, sampleData: SampleData, options: Options, extrudedRatio: number = 700): ReturnType<typeof setInterval> {
+    public renderByFixedTime(cesiumFieldMap: CesiumFieldMap, sampleData: SampleData, options: Options, renderOptions: RenderOptions): ReturnType<typeof setInterval> {
         const animationViewModel = this.viewer.animation.viewModel;
         let currentTime = ref(animationViewModel.timeLabel);
         const renderController = setInterval(() => {
@@ -72,7 +73,7 @@ export class Render {
         }, 300);
 
         const firstTickPressure = GeoJsonTool.getPropValue(cesiumFieldMap.geoJson, "pressure")
-        cesiumFieldMap.init(firstTickPressure)
+        cesiumFieldMap.init(firstTickPressure, options)
         cesiumFieldMap.addWell()
 
         watch(currentTime, () => {
@@ -81,7 +82,7 @@ export class Render {
             const epsilon = this.viewer.clockViewModel.multiplier / 5
             timeArr.forEach((time :string, index: number) => {
                 if (JulianDate.equalsEpsilon(this.clock.currentTime, JulianDate.fromIso8601(time), epsilon)) {
-                   cesiumFieldMap.update(propValArrList[index], options, extrudedRatio)
+                   cesiumFieldMap.update(propValArrList[index], options, renderOptions)
                 }
             })
         })

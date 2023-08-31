@@ -73,7 +73,6 @@ export class GridFieldMap {
             let coordTempArr: number[] = []
             coordEach(feature, (coord: Position) => {
                 coordTempArr.push(...coord)
-
             })
             let position5: Cartesian3[] = Cartesian3.fromDegreesArray(coordTempArr)
             positionArr.push(position5)
@@ -94,7 +93,7 @@ export class GridFieldMap {
     }
 
 
-    public init(propValArr: number[], options?: Options) {
+    public init(propValArr: number[], options: Options) {
         const tileNum: number = this.getTileNum()
         if (!this._viewer.entities.getById("1")) { // 当entity中没有其它tile时 执行init 否则不执行 防止重复添加
             for (let i = 0; i < tileNum; i++) {
@@ -107,7 +106,7 @@ export class GridFieldMap {
                     polygon: {
                         hierarchy: new PolygonHierarchy(position5[i]),
                         height: 2,
-                        outline: options?.outline,
+                        outline: options.outline,
                         show: true,
                         extrudedHeight: propVal / 700,
                         material: material,
