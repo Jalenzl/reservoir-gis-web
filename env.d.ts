@@ -6,3 +6,15 @@ declare module '*.vue' {
     export default component
 }
 
+declare module '*.glsl' {
+    const src: string;
+    export default src;
+}
+
+declare module '@types/three'
+
+declare module '@turf/turf'
+
+declare module '@types/dat.gui'
+
+declare module '@types/cesium'

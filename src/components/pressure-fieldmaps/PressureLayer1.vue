@@ -34,7 +34,6 @@ import {
   usePressureStore_l1t7,
   usePressureStore_l1t8,
 } from "@/stores/pressure/pressureLayer1";
-import {useBoundaryStore} from "@/stores/boundary/boundary";
 import {useSampleTime} from "@/stores/time/sampleTime";
 import {onMounted, reactive, ref, watch} from "vue";
 import {CesiumFieldMap} from "@/utils/GridFieldMap/CesiumFieldMap";
@@ -44,7 +43,7 @@ import {CesiumTool} from "@/utils/CesiumTool";
 import {GeoJsonTool} from "@/utils/GeoJsonTool";
 import {SectionAnalysis} from "@/utils/analyze/section-analysis";
 import {Render} from "@/utils/Render";
-import type {FeatureCollection, Position} from "@turf/helpers/dist/js/lib/geojson";
+import type {Position} from "@turf/helpers/dist/js/lib/geojson";
 import {featureEach} from "@turf/meta";
 import {IsolineAnalysis} from "@/utils/analyze/isoline-analysis";
 import {DynamicChartAnalysis} from "@/utils/analyze/dynamic-chart-analysis";

@@ -2,7 +2,7 @@ import {GridFieldMap} from "@/utils/GridFieldMap/index";
 import {Clock, ConstantProperty, Entity, JulianDate, PropertyBag, Viewer} from "cesium";
 import {FeatureCollection} from "@turf/helpers";
 import {post} from "@/utils/request";
-import {getColor_pressure} from "@/utils/color/tileColorByPressure";
+import {getColor_pressure} from "@/utils/color/tileColorByProp";
 import {reactive, watch} from "vue";
 
 type SampleData = interp.CesiumInterpolation.CesiumInterpSampleData
@@ -58,7 +58,7 @@ export class CesiumFieldMap extends GridFieldMap {
         }
     }
 
-    public update(propValArr: number[], options?: Options) {
+    public update(propValArr: number[], options?: Options, extrudedRatio: number = 700, rangeArr: number[] = [7084, 9749, 12413, 15078, 17743, 20407, 23072, 25737, 28401]) {
         const tileNum: number = this.getTileNum()
 
         if (propValArr) {
@@ -68,9 +68,9 @@ export class CesiumFieldMap extends GridFieldMap {
 
                 if (entity.polygon) {
                     // 赋材质
-                    entity.polygon.material = getColor_pressure(1, propVal)
+                    entity.polygon.material = getColor_pressure(1, propVal, rangeArr)
                     // 赋高度
-                    entity.polygon.extrudedHeight = new ConstantProperty(propVal / 700)
+                    entity.polygon.extrudedHeight = new ConstantProperty(propVal / extrudedRatio)
                     // 赋描述
                     const pressureStr = String(propVal?.toFixed(2))
                     entity.description = new ConstantProperty("pressure:" + pressureStr + "kpa")

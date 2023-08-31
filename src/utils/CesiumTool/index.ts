@@ -7,7 +7,7 @@ import {
     Cartesian3,
     ClockRange,
     HeadingPitchRoll,
-    JulianDate, Cartesian2, ConstantProperty
+    JulianDate, Cartesian2, ConstantProperty, Ion
 } from 'cesium';
 import type {CesiumFieldMap} from "@/utils/GridFieldMap/CesiumFieldMap";
 import type {GridFieldMap} from "@/utils/GridFieldMap";
@@ -23,6 +23,9 @@ export class CesiumTool {
         let scene: Scene | undefined
         let globe: Globe | undefined
         let clock: Clock | undefined
+
+        // token
+        Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2Y2U1MGFmMy1hMTcwLTRhYjAtYjk5OS1iZTc0ZDU0YWQ5ZDciLCJpZCI6MTMzNjM4LCJpYXQiOjE2ODE0MzY2MDF9.p8x5MZY9pqkLWpTJYqXVQr1mOkbqSh3o9FS8Avq-6cc"
 
         viewer = new Viewer(cesiumContainerId, {
             animation: true,

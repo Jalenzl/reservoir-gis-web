@@ -8,6 +8,7 @@ interface ColorBand {
 class ColorSettings_pressure {
     public colorBand: ColorBand
     private _alpha: number
+
     constructor(_alpha: number) {
         this._alpha = _alpha
         this.colorBand = {
@@ -34,31 +35,31 @@ class ColorSettings_pressure {
     }
 }
 
-export const getColor_pressure = (alpha: number, prop: number) => {
+export const getColor_pressure = (alpha: number, prop: number, rangeArr: number[] = [7084, 9749, 12413, 15078, 17743, 20407, 23072, 25737, 28401]) => {
     const colorSettings = new ColorSettings_pressure(alpha)
     const colorHash = {}
     // @ts-ignore
     let color = colorHash[prop]
     if (!color) {
-        if (prop >= 28401) {
+        if (prop >= rangeArr[8]) {
             color = colorSettings.colorBand.color1
-        } else if (prop >= 25737 && prop <= 28401) {
+        } else if (prop >= rangeArr[7] && prop <= rangeArr[8]) {
             color = colorSettings.colorBand.color2
-        } else if (prop >= 23072 && prop <= 25737) {
+        } else if (prop >= rangeArr[6] && prop <= rangeArr[7]) {
             color = colorSettings.colorBand.color3
-        } else if (prop >= 20407 && prop <= 23072) {
+        } else if (prop >= rangeArr[5] && prop <= rangeArr[6]) {
             color = colorSettings.colorBand.color4
-        } else if (prop >= 17743 && prop <= 20407) {
+        } else if (prop >= rangeArr[4] && prop <= rangeArr[5]) {
             color = colorSettings.colorBand.color5
-        } else if (prop >= 15078 && prop <= 17743) {
+        } else if (prop >= rangeArr[3] && prop <= rangeArr[4]) {
             color = colorSettings.colorBand.color6
-        } else if (prop >= 12413 && prop <= 15078) {
+        } else if (prop >= rangeArr[2] && prop <= rangeArr[3]) {
             color = colorSettings.colorBand.color7
-        } else if (prop >= 9749 && prop <= 12413) {
+        } else if (prop >= rangeArr[1] && prop <= rangeArr[2]) {
             color = colorSettings.colorBand.color8
-        } else if (prop >= 7084 && prop <= 9749) {
+        } else if (prop >= rangeArr[0] && prop <= rangeArr[1]) {
             color = colorSettings.colorBand.color9
-        } else if (prop <= 7084) {
+        } else if (prop <= rangeArr[0]) {
             color = colorSettings.colorBand.color10
         }
         // @ts-ignore

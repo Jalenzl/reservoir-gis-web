@@ -11,7 +11,7 @@ import {
     JulianDate,
     Clock
 } from "cesium"
-import {getColor_pressure} from "@/utils/color/tileColorByPressure";
+import {getColor_pressure} from "@/utils/color/tileColorByProp";
 import {CesiumTool} from "@/utils/CesiumTool";
 
 type Options = interp.CesiumInterpolation.CesiumInterpOptions
