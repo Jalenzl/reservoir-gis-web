@@ -15,16 +15,16 @@
 
     <div class="eleNumber-container">
       <span class="eleNumber">0.0000</span>
-      <span class="eleNumber">0.0100</span>
-      <span class="eleNumber">0.0210</span>
-      <span class="eleNumber">0.0410</span>
-      <span class="eleNumber">0.0620</span>
-      <span class="eleNumber">0.0830</span>
-      <span class="eleNumber">0.1040</span>
-      <span class="eleNumber">0.1240</span>
-      <span class="eleNumber">0.1450</span>
-      <span class="eleNumber">0.1660</span>
-      <span class="eleNumber">0.1870</span>
+      <span class="eleNumber">0.1800</span>
+      <span class="eleNumber">0.3600</span>
+      <span class="eleNumber">0.5400</span>
+      <span class="eleNumber">0.7200</span>
+      <span class="eleNumber">0.9000</span>
+      <span class="eleNumber">1.0800</span>
+      <span class="eleNumber">1.2600</span>
+      <span class="eleNumber">1.4400</span>
+      <span class="eleNumber">1.6200</span>
+      <span class="eleNumber">1.8000</span>
     </div>
 
     <span class="unit">(单位: m/day)</span>

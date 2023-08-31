@@ -4,11 +4,16 @@
       <SideBarComp/>
       <div class="velocityThreshold-content-main">
         <HomeMain>
-          <ThresholdOilVelocityLayer1 @getLayerNo="getLayerNo" v-if="layerNumber === 1"/>
-          <ThresholdOilVelocityLayer3 @getLayerNo="getLayerNo" v-if="layerNumber === 3"/>
-          <ThresholdOilVelocityLayer4 @getLayerNo="getLayerNo" v-if="layerNumber === 4"/>
-          <ThresholdOilVelocityLayer6 @getLayerNo="getLayerNo" v-if="layerNumber === 6"/>
-          <ThresholdOilVelocityLayer7 @getLayerNo="getLayerNo" v-if="layerNumber === 7"/>
+          <ThresholdOilVelocityLayer1 @getPicker="getPicker" v-if="layerNumber == 1 && type == 'oil'"/>
+          <ThresholdOilVelocityLayer3 @getPicker="getPicker" v-if="layerNumber == 3 && type == 'oil'"/>
+          <ThresholdOilVelocityLayer4 @getPicker="getPicker" v-if="layerNumber == 4 && type == 'oil'"/>
+          <ThresholdOilVelocityLayer6 @getPicker="getPicker" v-if="layerNumber == 6 && type == 'oil'"/>
+          <ThresholdOilVelocityLayer7 @getPicker="getPicker" v-if="layerNumber == 7 && type == 'oil'"/>
+          <ThresholdWaterVelocityLayer1 @getPicker="getPicker" v-if="layerNumber == 1 && type == 'water'"/>
+          <ThresholdWaterVelocityLayer3 @getPicker="getPicker" v-if="layerNumber == 3 && type == 'water'"/>
+          <ThresholdWaterVelocityLayer4 @getPicker="getPicker" v-if="layerNumber == 4 && type == 'water'"/>
+          <ThresholdWaterVelocityLayer6 @getPicker="getPicker" v-if="layerNumber == 6 && type == 'water'"/>
+          <ThresholdWaterVelocityLayer7 @getPicker="getPicker" v-if="layerNumber == 7 && type == 'water'"/>
         </HomeMain>
       </div>
     </div>
@@ -29,10 +34,24 @@ import ThresholdOilVelocityLayer6
   from "@/components/flowVelocity-thematic/threshold/oil/ThresholdOilVelocityLayer6.vue";
 import ThresholdOilVelocityLayer7
   from "@/components/flowVelocity-thematic/threshold/oil/ThresholdOilVelocityLayer7.vue";
+import ThresholdWaterVelocityLayer1
+  from "@/components/flowVelocity-thematic/threshold/water/ThresholdWaterVelocityLayer1.vue";
+import ThresholdWaterVelocityLayer3
+  from "@/components/flowVelocity-thematic/threshold/water/ThresholdWaterVelocityLayer3.vue";
+import ThresholdWaterVelocityLayer4
+  from "@/components/flowVelocity-thematic/threshold/water/ThresholdWaterVelocityLayer4.vue";
+import ThresholdWaterVelocityLayer6
+  from "@/components/flowVelocity-thematic/threshold/water/ThresholdWaterVelocityLayer6.vue";
+import ThresholdWaterVelocityLayer7
+  from "@/components/flowVelocity-thematic/threshold/water/ThresholdWaterVelocityLayer7.vue";
 
 
 const layerNumber = ref(1);
-const getLayerNo = layerNo => layerNumber.value = layerNo
+const type = ref("oil");
+const getPicker = picker => {
+  layerNumber.value = picker.layerNo
+  type.value = picker.type
+}
 </script>
 
 <style scoped lang="scss">

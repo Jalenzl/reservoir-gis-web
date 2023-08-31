@@ -1,5 +1,5 @@
 <template>
-  <div class="cesiumContainer-threshold" id="cesiumContainer-threshold">
+  <div class="cesiumContainer-threshold-oil7" id="cesiumContainer-threshold-oil7">
     <div class="toolbar" ref="toolbar"></div>
     <VelocityOilColorBand/>
   </div>
@@ -19,6 +19,7 @@ import {Cartesian3, JulianDate} from "cesium";
 import {featureEach} from "@turf/meta";
 import {post} from "@/utils/request";
 import {Render} from "@/utils/Render";
+import { ElLoading } from 'element-plus'
 
 type sampleData = interp.CesiumInterpolation.CesiumInterpSampleData
 type Options = interp.CesiumInterpolation.CesiumInterpOptions
@@ -34,29 +35,32 @@ let {getData_l1t1} = pressureStore_l1t1
 const sampleTime = useSampleTime()
 let {timeArr} = storeToRefs(sampleTime)
 
-/*----------settings--------*/
-const renderSettings = reactive({
-  renderType: 2, // 1 for fixed time, 2 for time interpolation
-})
-
 /*----------layer picker-----------*/
-const layerPicker = reactive({
+const picker = reactive({
   layerNo: 7,
+  type: "oil",
 })
-const emit = defineEmits(["getLayerNo"])
-const emitLayerNo = () => {
-  emit("getLayerNo", Number(layerPicker.layerNo))
+const emit = defineEmits(["getPicker"])
+const emitPicker = () => {
+  emit("getPicker", picker)
 }
 
 onMounted(async () => {
   /*--------initializing map------------*/
-  let {viewer, scene, globe, clock} = CesiumTool.initMap("cesiumContainer-threshold")
+  let {viewer, scene, globe, clock} = CesiumTool.initMap("cesiumContainer-threshold-oil7")
   const mapInstance: IMapInstance = {
     viewer,
     scene,
     globe,
     clock,
   }
+
+  /*----------------loading---------------*/
+  const loading = ElLoading.service({
+    lock: true,
+    text: 'Loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
 
   /*--------dealing with data---------*/
   const pressure_l1t1_jsonData = await getData_l1t1()
@@ -157,32 +161,10 @@ onMounted(async () => {
   /*--------------rendering-----------------*/
   const mainRendering = () => {
     const render = new Render(viewer, clock)
-    let staticRenderController = null
-    let dynamicRenderController = null
-
-    watch(
-        renderSettings,
-        (val) => {
-
-          if (Number(val.renderType) === 1) {
-            if (dynamicRenderController) {
-              clearInterval(dynamicRenderController)
-              viewer.entities.removeAll()
-            }
-            staticRenderController = render.renderByFixedTime(cesiumFieldMap, sampleData_l7, contourOptions, renderOptions)
-          } else if (Number(val.renderType) === 2) {
-            if (staticRenderController) {
-              clearInterval(staticRenderController)
-              viewer.entities.removeAll()
-            }
-            dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l7, contourOptions, renderOptions)
-          }
-        },
-        {immediate: true}
-    )
-
+    let dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l7, contourOptions, renderOptions)
   }
 
+  loading.close()
   mainRendering()
 
   /*---------------gui----------------*/
@@ -222,7 +204,7 @@ onMounted(async () => {
       .name("是否显示网格边框线")
 
   gui
-      .add(layerPicker, "layerNo", {
+      .add(picker, "layerNo", {
         "layer1": 1,
         "layer3": 3,
         "layer4": 4,
@@ -231,14 +213,24 @@ onMounted(async () => {
       })
       .name("选择层数")
       .onChange(() => {
-        emitLayerNo()
+        emitPicker()
+      })
+
+  gui
+      .add(picker, "type", {
+        "water": "water",
+        "oil": "oil",
+      })
+      .name("选择流速类型")
+      .onChange(() => {
+        emitPicker()
       })
 })
 
 </script>
 
 <style scoped lang="scss">
-.cesiumContainer-threshold {
+.cesiumContainer-threshold-oil7 {
   position: relative;
   width: 100%;
   height: 99%;

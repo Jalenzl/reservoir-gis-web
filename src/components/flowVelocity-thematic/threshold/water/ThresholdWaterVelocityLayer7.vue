@@ -1,7 +1,7 @@
 <template>
-  <div class="cesiumContainer-threshold-oil4" id="cesiumContainer-threshold-oil4">
+  <div class="cesiumContainer-threshold-water7" id="cesiumContainer-threshold-water7">
     <div class="toolbar" ref="toolbar"></div>
-    <VelocityOilColorBand/>
+    <VelocityWaterColorBand />
   </div>
 </template>
 
@@ -10,7 +10,7 @@ import * as dat from "dat.gui"
 import {CesiumFieldMap} from "@/utils/GridFieldMap/CesiumFieldMap";
 import {storeToRefs} from "pinia";
 import {onMounted, reactive, ref, watch} from "vue";
-import VelocityOilColorBand from "@/components/colorBand/VelocityOilColorBand.vue";
+import VelocityWaterColorBand from "@/components/colorBand/VelocityWaterColorBand.vue";
 import {CesiumTool} from "@/utils/CesiumTool";
 import {usePressureStore_l1t1} from "@/stores/pressure/pressureLayer1";
 import {useSampleTime} from "@/stores/time/sampleTime";
@@ -35,10 +35,10 @@ let {getData_l1t1} = pressureStore_l1t1
 const sampleTime = useSampleTime()
 let {timeArr} = storeToRefs(sampleTime)
 
-/*----------layer picker-----------*/
+/*----------layer&type picker-----------*/
 const picker = reactive({
-  layerNo: 4,
-  type: "oil",
+  layerNo: 7,
+  type: "water",
 })
 const emit = defineEmits(["getPicker"])
 const emitPicker = () => {
@@ -47,7 +47,7 @@ const emitPicker = () => {
 
 onMounted(async () => {
   /*--------initializing map------------*/
-  let {viewer, scene, globe, clock} = CesiumTool.initMap("cesiumContainer-threshold-oil4")
+  let {viewer, scene, globe, clock} = CesiumTool.initMap("cesiumContainer-threshold-water7")
   const mapInstance: IMapInstance = {
     viewer,
     scene,
@@ -96,51 +96,51 @@ onMounted(async () => {
     }
   }
 
-  // layer3
-  let vOilArr_l4t1 = reactive<number[]>([])
-  let vOilArr_l4t2 = reactive<number[]>([])
-  let vOilArr_l4t3 = reactive<number[]>([])
-  let vOilArr_l4t4 = reactive<number[]>([])
-  let vOilArr_l4t5 = reactive<number[]>([])
-  let vOilArr_l4t6 = reactive<number[]>([])
-  let vOilArr_l4t7 = reactive<number[]>([])
-  let vOilArr_l4t8 = reactive<number[]>([])
+  // layer1
+  let vWaterArr_l7t1 = reactive<number[]>([])
+  let vWaterArr_l7t2 = reactive<number[]>([])
+  let vWaterArr_l7t3 = reactive<number[]>([])
+  let vWaterArr_l7t4 = reactive<number[]>([])
+  let vWaterArr_l7t5 = reactive<number[]>([])
+  let vWaterArr_l7t6 = reactive<number[]>([])
+  let vWaterArr_l7t7 = reactive<number[]>([])
+  let vWaterArr_l7t8 = reactive<number[]>([])
 
-  vOilArr_l4t1.push(...await getVelocityData(1, 4, 'oil'))
-  vOilArr_l4t2.push(...await getVelocityData(2, 4, 'oil'))
-  vOilArr_l4t3.push(...await getVelocityData(3, 4, 'oil'))
-  vOilArr_l4t4.push(...await getVelocityData(4, 4, 'oil'))
-  vOilArr_l4t5.push(...await getVelocityData(5, 4, 'oil'))
-  vOilArr_l4t6.push(...await getVelocityData(6, 4, 'oil'))
-  vOilArr_l4t7.push(...await getVelocityData(7, 4, 'oil'))
-  vOilArr_l4t8.push(...await getVelocityData(8, 4, 'oil'))
+  vWaterArr_l7t1.push(...await getVelocityData(1, 7, 'water'))
+  vWaterArr_l7t2.push(...await getVelocityData(2, 7, 'water'))
+  vWaterArr_l7t3.push(...await getVelocityData(3, 7, 'water'))
+  vWaterArr_l7t4.push(...await getVelocityData(4, 7, 'water'))
+  vWaterArr_l7t5.push(...await getVelocityData(5, 7, 'water'))
+  vWaterArr_l7t6.push(...await getVelocityData(6, 7, 'water'))
+  vWaterArr_l7t7.push(...await getVelocityData(7, 7, 'water'))
+  vWaterArr_l7t8.push(...await getVelocityData(8, 7, 'water'))
 
   featureEach(pressure_l1t1_jsonData, (currentFeature, featureIndex) => {
-    currentFeature.properties.pressure = vOilArr_l4t1[featureIndex]
+    currentFeature.properties.pressure = vWaterArr_l7t1[featureIndex]
   })
 
   //sample velocity array
-  const vOilArrList_l4: number[][] = [
-    vOilArr_l4t1,
-    vOilArr_l4t2,
-    vOilArr_l4t3,
-    vOilArr_l4t4,
-    vOilArr_l4t5,
-    vOilArr_l4t6,
-    vOilArr_l4t7,
-    vOilArr_l4t8,
+  const vWaterArrList_l7: number[][] = [
+    vWaterArr_l7t1,
+    vWaterArr_l7t2,
+    vWaterArr_l7t3,
+    vWaterArr_l7t4,
+    vWaterArr_l7t5,
+    vWaterArr_l7t6,
+    vWaterArr_l7t7,
+    vWaterArr_l7t8,
   ]
 
   const cesiumFieldMap = new CesiumFieldMap(
       viewer, // viewer
       pressure_l1t1_jsonData, // geojson
       clock, // clock
-      "v_oil", // propName
+      "v_water", // propName
   )
 
-  const sampleData_l4: sampleData = {
+  const sampleData_l7: sampleData = {
     timeArray: timeArr.value,
-    propValArray: vOilArrList_l4,
+    propValArray: vWaterArrList_l7,
     interpolationAlgorithm: "LAGRANGE",
     currentTime: JulianDate.toIso8601(clock.currentTime)
   }
@@ -148,20 +148,20 @@ onMounted(async () => {
   /*-------------dealing with render settings----------*/
   const contourOptions = reactive<Options>({ // 等高线设置
     bottom: 0,
-    peak: 1.0,
+    peak: 2.0,
     outline: false,
   })
 
   const renderOptions: RenderOption = {
-    rangeArr: [0.010, 0.021, 0.041, 0.062, 0.083, 0.104, 0.124, 0.145, 0.166, 0.187],
-    extrudedRatio: 0.003,
+    rangeArr: [0.18, 0.36, 0.54, 0.72, 0.90, 1.08, 1.26, 1.44, 1.62, 1.80],
+    extrudedRatio: 0.05,
     unit: "m/day",
   }
 
   /*--------------rendering-----------------*/
   const mainRendering = () => {
     const render = new Render(viewer, clock)
-    let dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l4, contourOptions, renderOptions)
+    let dynamicRenderController = render.renderByTimeInterpolation(cesiumFieldMap, sampleData_l7, contourOptions, renderOptions)
   }
 
   loading.close()
@@ -178,8 +178,8 @@ onMounted(async () => {
   gui
       .add(contourOptions, "bottom")
       .min(0)
-      .max(1.0)
-      .step(0.001)
+      .max(2.0)
+      .step(0.01)
       .name("调整等值线下界")
       .onChange(() => {
         if (contourOptions.bottom >= contourOptions.peak) {
@@ -190,8 +190,8 @@ onMounted(async () => {
   gui
       .add(contourOptions, "peak")
       .min(0)
-      .max(1.0)
-      .step(0.001)
+      .max(2.0)
+      .step(0.01)
       .name("调整等值线上界")
       .onChange(() => {
         if (contourOptions.bottom >= contourOptions.peak) {
@@ -230,7 +230,7 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.cesiumContainer-threshold-oil4 {
+.cesiumContainer-threshold-water7 {
   position: relative;
   width: 100%;
   height: 99%;
